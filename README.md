@@ -8,9 +8,9 @@ $ ./freebox_exporter --version "v6" --endpoint "http://mafreebox.freebox.fr --li
 ```
 
 ## flags
-`--version`: freebox API version (default v6)
-`--endpoint`: freebox API url (default http://mafreebox.freebox.fr)
-`--listen`: port for prometheus metrics (default :10001)
+- `--version`: freebox API version (default v6)
+- `--endpoint`: freebox API url (default http://mafreebox.freebox.fr)
+- `--listen`: port for prometheus metrics (default :10001)
 
 ## first run
 If you launch the application for the first time, you must allow it to access the freebox API.
