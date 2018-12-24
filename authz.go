@@ -162,12 +162,18 @@ func getSession(app, passwd string) {
 // getToken gets a valid session_token and asks for user to change
 // the set of permissions on the API
 func getToken() string {
-	getGranted()
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
-	_, _ = reader.ReadString('\n')
+	home := os.Getenv("HOME")
+	fileStore := home + "/.freebox_token"
+	if _, err := os.Stat(fileStore); os.IsNotExist(err) {
+		getGranted()
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
+		_, _ = reader.ReadString('\n')
+	} else {
+		retreiveToken()
+	}
 	getChallenge()
-	password := hmacSha1(trackID.Result.AppToken, challenged.Result.Challenge)
+	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
 	getSession(promExporter.AppID, password)
 	if token.Success {
 		fmt.Println("successfully authenticated")
