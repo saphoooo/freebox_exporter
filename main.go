@@ -40,101 +40,101 @@ func main() {
 
 	// dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_dsl_rate_up",
+		Name: "freebox_dsl_up_bytes_sec",
 		Help: "Available upload bandwidth (in byte/s)",
 	})
 	rateDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_dsl_rate_down",
+		Name: "freebox_dsl_down_bytes_sec",
 		Help: "Available download bandwidth (in byte/s)",
 	})
 	snrUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_dsl_snr_up",
+		Name: "freebox_dsl_snr_up_decibel",
 		Help: "Upload signal/noise ratio (in 1/10 dB)",
 	})
 	snrDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_dsl_snr_down",
+		Name: "freebox_dsl_snr_down_decibel",
 		Help: "Download signal/noise ratio (in 1/10 dB)",
 	})
 
 	// switch gauges
 	rx1Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx1",
+		Name: "freebox_switch_rx1_bytes_sec",
 		Help: "Receive rate on port 1 (in byte/s)",
 	})
 	tx1Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx1",
+		Name: "freebox_switch_tx1_bytes_sec",
 		Help: "Transmit on port 1 (in byte/s)",
 	})
 	rx2Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx2",
+		Name: "freebox_switch_rx2_bytes_sec",
 		Help: "Receive rate on port 2 (in byte/s)",
 	})
 	tx2Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx2",
+		Name: "freebox_switch_tx2_bytes_sec",
 		Help: "Transmit on port 2 (in byte/s)",
 	})
 	rx3Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx3",
+		Name: "freebox_switch_rx3_bytes_sec",
 		Help: "Receive rate on port 3 (in byte/s)",
 	})
 	tx3Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx3",
+		Name: "freebox_switch_tx3_bytes_sec",
 		Help: "Transmit on port 3 (in byte/s)",
 	})
 	rx4Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx4",
+		Name: "freebox_switch_rx4_bytes_sec",
 		Help: "Receive rate on port 4 (in byte/s)",
 	})
 	tx4Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx4",
+		Name: "freebox_switch_tx4_bytes_sec",
 		Help: "Transmit on port 4 (in byte/s)",
 	})
 
 	// temp gauges
 	cpumGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_cpum",
+		Name: "freebox_temp_cpum_celsius",
 		Help: "Temperature cpum (in °C)",
 	})
 	cpubGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_cpub",
+		Name: "freebox_temp_cpub_celsius",
 		Help: "Temperature cpub (in °C)",
 	})
 	swGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_sw",
+		Name: "freebox_temp_sw_celsius",
 		Help: "Temperature sw (in °C)",
 	})
 	hddGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_hdd",
+		Name: "freebox_temp_hdd_celsius",
 		Help: "Temperature hdd (in °C)",
 	})
 	fanSpeedGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_fan_speed",
+		Name: "freebox_temp_fan_speed_rpm",
 		Help: "Fan rpm",
 	})
 
 	// net gauges
 	bwUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_bw_up",
+		Name: "freebox_net_bw_up_bytes_sec",
 		Help: "Upload available bandwidth (in byte/s)",
 	})
 	bwDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_bw_down",
+		Name: "freebox_net_bw_down_bytes_sec",
 		Help: "Download available bandwidth (in byte/s)",
 	})
 	netRateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_rate_up",
+		Name: "freebox_net_up_bytes_sec",
 		Help: "Upload rate (in byte/s)",
 	})
 	netRateDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_rate_down",
+		Name: "freebox_net_down_bytes_sec",
 		Help: "Download rate (in byte/s)",
 	})
 	vpnRateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_vpn_rate_up",
+		Name: "freebox_net_vpn_up_bytes_sec",
 		Help: "Vpn client upload rate (in byte/s)",
 	})
 	vpnRateDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_vpn_rate_down",
+		Name: "freebox_net_vpn_down_bytes_sec",
 		Help: "Vpn client download rate (in byte/s)",
 	})
 	// infinite loop to get all statistics
