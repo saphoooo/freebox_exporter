@@ -40,11 +40,11 @@ func main() {
 
 	// dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_dsl_up_bytes_sec",
+		Name: "freebox_dsl_up_bytes",
 		Help: "Available upload bandwidth (in byte/s)",
 	})
 	rateDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_dsl_down_bytes_sec",
+		Name: "freebox_dsl_down_bytes",
 		Help: "Available download bandwidth (in byte/s)",
 	})
 	snrUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
@@ -58,35 +58,35 @@ func main() {
 
 	// switch gauges
 	rx1Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx1_bytes_sec",
+		Name: "freebox_switch_rx1_bytes",
 		Help: "Receive rate on port 1 (in byte/s)",
 	})
 	tx1Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx1_bytes_sec",
+		Name: "freebox_switch_tx1_bytes",
 		Help: "Transmit on port 1 (in byte/s)",
 	})
 	rx2Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx2_bytes_sec",
+		Name: "freebox_switch_rx2_bytes",
 		Help: "Receive rate on port 2 (in byte/s)",
 	})
 	tx2Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx2_bytes_sec",
+		Name: "freebox_switch_tx2_bytes",
 		Help: "Transmit on port 2 (in byte/s)",
 	})
 	rx3Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx3_bytes_sec",
+		Name: "freebox_switch_rx3_bytes",
 		Help: "Receive rate on port 3 (in byte/s)",
 	})
 	tx3Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx3_bytes_sec",
+		Name: "freebox_switch_tx3_bytes",
 		Help: "Transmit on port 3 (in byte/s)",
 	})
 	rx4Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx4_bytes_sec",
+		Name: "freebox_switch_rx4_bytes",
 		Help: "Receive rate on port 4 (in byte/s)",
 	})
 	tx4Gauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx4_bytes_sec",
+		Name: "freebox_switch_tx4_bytes",
 		Help: "Transmit on port 4 (in byte/s)",
 	})
 
@@ -114,27 +114,27 @@ func main() {
 
 	// net gauges
 	bwUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_bw_up_bytes_sec",
+		Name: "freebox_net_bw_up_bytes",
 		Help: "Upload available bandwidth (in byte/s)",
 	})
 	bwDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_bw_down_bytes_sec",
+		Name: "freebox_net_bw_down_bytes",
 		Help: "Download available bandwidth (in byte/s)",
 	})
 	netRateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_up_bytes_sec",
+		Name: "freebox_net_up_bytes",
 		Help: "Upload rate (in byte/s)",
 	})
 	netRateDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_down_bytes_sec",
+		Name: "freebox_net_down_bytes",
 		Help: "Download rate (in byte/s)",
 	})
 	vpnRateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_vpn_up_bytes_sec",
+		Name: "freebox_net_vpn_up_bytes",
 		Help: "Vpn client upload rate (in byte/s)",
 	})
 	vpnRateDownGauge := promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_net_vpn_down_bytes_sec",
+		Name: "freebox_net_vpn_down_bytes",
 		Help: "Vpn client download rate (in byte/s)",
 	})
 	// infinite loop to get all statistics
