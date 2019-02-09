@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -38,6 +39,9 @@ func init() {
 func main() {
 	flag.Parse()
 
+	if !strings.HasSuffix(mafreebox, "/") {
+		mafreebox = mafreebox + "/"
+	}
 	// dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",
