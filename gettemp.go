@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,7 +32,7 @@ func getTemp() (int, int, int, int, int) {
 		log.Fatalln(err)
 	}
 	buf := bytes.NewReader(r)
-	req, err := http.NewRequest("POST", mafreebox+"api/v6/rrd/", buf)
+	req, err := http.NewRequest("POST", fmt.Sprintf("%sapi/%s/rrd/", mafreebox, version), buf)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,6 +41,10 @@ func getTemp() (int, int, int, int, int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	if resp.StatusCode == 404 {
+		log.Fatal(resp.Status)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
