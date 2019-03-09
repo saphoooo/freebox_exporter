@@ -3,8 +3,16 @@ A prometheus exporter for freebox stats
 
 # how to use it
 
+#### Standalone
+
 ```
-$ ./freebox_exporter -version "v6" -endpoint "http://mafreebox.freebox.fr -listen ":10001"
+./freebox_exporter -version "v6" -endpoint "http://mafreebox.freebox.fr -listen ":10001"
+```
+
+#### Docker 
+  
+```
+docker run -d --name freebox_exporter --restart always -p 10001:10001 cosme/freebox_exporter
 ```
 
 ## flags
