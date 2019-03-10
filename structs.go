@@ -77,3 +77,13 @@ type database struct {
 	Precision int      `json:"precision,omitempty"`
 	Fields    []string `json:"fields"`
 }
+
+type lanHost struct {
+	Reachable   bool   `json:"reachable,omitempty"`
+	PrimaryName string `json:"primary_name,omitempty"`
+}
+type lan struct {
+	Success   bool      `json:"success"`
+	Result    []lanHost `json:"result"`
+	ErrorCode string    `json:"error_code"`
+}
