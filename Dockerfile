@@ -16,4 +16,6 @@ FROM scratch
 
 COPY --from=0 app /
 
+ENV HOME="/token"
+
 CMD ["/app"]
