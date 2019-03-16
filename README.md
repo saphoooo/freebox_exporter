@@ -16,21 +16,21 @@ A prometheus exporter for freebox stats
 ./freebox_exporter
 ```
 
-The following parameters are optional and can be superseed:
+### The following parameters are optional and can be superseed:
 
-### Freebox API version
+- Freebox API version
 
 ```
 ./freebox_exporter -version "v6"
 ```
 
-### Freebox API endpoint
+- Freebox API endpoint
 
 ```
 ./freebox_exporter -endpoint "http://mafreebox.freebox.fr
 ```
 
-### Port
+- Port
 
 ```
 ./freebox_exporter -listen ":10001"
@@ -42,32 +42,33 @@ The following parameters are optional and can be superseed:
   
 ```
 docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
-  --restart on-failure -p 10001:10001 -v freebox-token:/token saphoooo/freebox-exporter \
-  -version "v6" -endpoint "http://mafreebox.freebox.fr -listen ":10001"
+  saphoooo/freebox-exporter
 ```
 
-### Local token
+### The following parameters are optional and can be superseed:
+
+- Local token
 
 ```
 docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
   -e HOME=token -v /path/to/token:/token saphoooo/freebox-exporter
 ```
 
-### Freebox API version
+- Freebox API version
 
 ```
 docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
   saphoooo/freebox-exporter -version "v6"
 ```
 
-### Freebox API endpoint
+- Freebox API endpoint
 
 ```
 docker run -d --name freebox-exporter --restart on-failure -p 10001:10001
   saphoooo/freebox-exporter -endpoint "http://mafreebox.freebox.fr"
 ```
 
-### Port
+- Port
 
 ```
 docker run -d --name freebox-exporter --restart on-failure -p 8080:10001 \
