@@ -37,7 +37,9 @@ func getSystem() systemR {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	err = json.Unmarshal(body, &systemResp)
+
 	switch systemResp.ErrorCode {
 	case "auth_required":
 		sessToken = getSessToken(freeboxToken)

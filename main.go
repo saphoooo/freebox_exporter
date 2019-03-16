@@ -44,7 +44,7 @@ func main() {
 	if !strings.HasSuffix(mafreebox, "/") {
 		mafreebox = mafreebox + "/"
 	}
-	// dsl gauge
+	// RRD dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",
 		Help: "Available upload bandwidth (in byte/s)",
@@ -62,7 +62,7 @@ func main() {
 		Help: "Download signal/noise ratio (in 1/10 dB)",
 	})
 
-	// switch gauges
+	// RRD switch gauges
 	rx1Gauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_switch_rx1_bytes",
 		Help: "Receive rate on port 1 (in byte/s)",
@@ -96,7 +96,8 @@ func main() {
 		Help: "Transmit on port 4 (in byte/s)",
 	})
 
-	// temp gauges
+	// RRD temp gauges
+	// these ones look broken, use system temp gauges instead
 	cpumGauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_temp_cpum_celsius",
 		Help: "Temperature cpum (in °C)",
@@ -118,7 +119,7 @@ func main() {
 		Help: "Fan rpm",
 	})
 
-	// net gauges
+	// RRD net gauges
 	bwUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_net_bw_up_bytes",
 		Help: "Upload available bandwidth (in byte/s)",
@@ -143,6 +144,7 @@ func main() {
 		Name: "freebox_net_vpn_down_bytes",
 		Help: "Vpn client download rate (in byte/s)",
 	})
+
 	// lan gauges
 	lanReachableGauges := promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -150,11 +152,11 @@ func main() {
 			Help: "Hosts reachable on LAN",
 		},
 		[]string{
-			// Host name
+			// Hostname
 			"name",
 		},
 	)
-	// system gauges
+	// SYSTEM temp gauges
 	systemTempGauges := promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_system_temp",
@@ -165,6 +167,8 @@ func main() {
 			"name",
 		},
 	)
+
+	// SYSTEM fan gauges
 	systemFanGauges := promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_system_fan",
@@ -175,6 +179,7 @@ func main() {
 			"name",
 		},
 	)
+
 	// infinite loop to get all statistics
 	go func() {
 		for {
@@ -227,6 +232,7 @@ func main() {
 				}
 			}
 
+			// fan metrics
 			systemStats := getSystem()
 			sensors := systemStats.Sensors
 			fans := systemStats.Fans
@@ -241,7 +247,7 @@ func main() {
 		}
 	}()
 
-	// expose the registered metrics via HTTP
+	// expose the registered metrics via HTTP OpenMetrics
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(listen, nil))
 }
