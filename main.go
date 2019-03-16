@@ -22,6 +22,7 @@ var (
 	token        *sessionToken
 	rrdTest      *rrd
 	lanResp      *lan
+	systemResp   *system
 	promExporter = app{
 		AppID:      "fr.freebox.exporter",
 		AppName:    "prom_exporter",
@@ -153,6 +154,27 @@ func main() {
 			"name",
 		},
 	)
+	// system gauges
+	systemTempGauges := promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_system_temp",
+			Help: "Temp sensors reported by system (in °C)",
+		},
+		[]string{
+			"id",
+			"name",
+		},
+	)
+	systemFanGauges := promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_system_fan",
+			Help: "Fan speed reported by system (in rpm)",
+		},
+		[]string{
+			"id",
+			"name",
+		},
+	)
 	// infinite loop to get all statistics
 	go func() {
 		for {
@@ -203,7 +225,16 @@ func main() {
 				} else {
 					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(0))
 				}
+			}
 
+			systemStats := getSystem()
+			sensors := systemStats.Sensors
+			fans := systemStats.Fans
+			for _, v := range sensors {
+				systemTempGauges.WithLabelValues(v.ID, v.Name).Set(float64(v.Value))
+			}
+			for _, v := range fans {
+				systemFanGauges.WithLabelValues(v.ID, v.Name).Set(float64(v.Value))
 			}
 
 			time.Sleep(10 * time.Second)
