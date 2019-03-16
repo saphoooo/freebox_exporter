@@ -87,3 +87,19 @@ type lan struct {
 	Result    []lanHost `json:"result"`
 	ErrorCode string    `json:"error_code"`
 }
+
+type idNameValue struct {
+	ID    string `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Value int    `json:"value,omitempty"`
+}
+type systemR struct {
+	Sensors []idNameValue `json:"sensors"`
+	Fans    []idNameValue `json:"fans"`
+}
+
+type system struct {
+	Success   bool    `json:"success"`
+	Result    systemR `json:"result"`
+	ErrorCode string  `json:"error_code"`
+}
