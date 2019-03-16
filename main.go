@@ -21,6 +21,7 @@ var (
 	challenged   *challenge
 	token        *sessionToken
 	rrdTest      *rrd
+	lanResp      *lan
 	promExporter = app{
 		AppID:      "fr.freebox.exporter",
 		AppName:    "prom_exporter",
@@ -141,6 +142,17 @@ func main() {
 		Name: "freebox_net_vpn_down_bytes",
 		Help: "Vpn client download rate (in byte/s)",
 	})
+	// lan gauges
+	lanReachableGauges := promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_lan_reachable",
+			Help: "Hosts reachable on LAN",
+		},
+		[]string{
+			// Host name
+			"name",
+		},
+	)
 	// infinite loop to get all statistics
 	go func() {
 		for {
@@ -182,6 +194,17 @@ func main() {
 			vpnRateUpGauge.Set(float64(vpnRateUp))
 			vpnRateDownGauge.Set(float64(vpnRateDown))
 			//fmt.Printf("bw_up: %d\nbw_down: %d\nrate_up: %d\nrate_down: %d\nvpn_rate_up: %d\nvpn_rate_down: %d\n", bwUp, bwDown, rateUp, rateDown, vpnRateUp, vpnRateDown)
+
+			// lan metrics
+			lanAvailable := getLan()
+			for _, v := range lanAvailable {
+				if v.Reachable {
+					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(1))
+				} else {
+					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(0))
+				}
+
+			}
 
 			time.Sleep(10 * time.Second)
 		}

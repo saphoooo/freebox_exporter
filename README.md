@@ -12,8 +12,14 @@ A prometheus exporter for freebox stats
 ## Docker 
   
 ```
-docker run -d --name freebox-exporter --restart always -p 10001:10001 saphoooo/freebox-exporter
+docker run -d --name freebox-exporter \
+  --restart on-failure -p 10001:10001 -v freebox-token:/token saphoooo/freebox-exporter \
+  -version "v6" -endpoint "http://mafreebox.freebox.fr -listen ":10001"
 ```
+Parameters at the end are optional.
+Volume freebox-token is optional, it allows to save the access token outside of the container
+to reuse authentication upon an update of the container. You can use a folder path instead of
+the named volume (-v /path/to/folder:/token) to save the access token locally on the host. 
 
 ## flags
 - `-version`: freebox API version (default v6)

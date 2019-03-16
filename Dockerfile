@@ -16,4 +16,4 @@ FROM scratch
 
 COPY --from=0 app /
 
-CMD ["/app"]
+ENTRYPOINT ["/app"]
