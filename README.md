@@ -1,6 +1,10 @@
 # freebox_exporter
 A prometheus exporter for freebox stats
 
+## Cmds
+
+`freebox_exporter`
+
 ## flags
 - `-version`: freebox API version (default v6)
 - `-endpoint`: freebox API url (default http://mafreebox.freebox.fr)
@@ -48,6 +52,8 @@ docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
 ### The following parameters are optional and can be superseed:
 
 - Local token
+
+Volume allows to save the access token outside of the container to reuse authentication upon an update of the container.
 
 ```
 docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
