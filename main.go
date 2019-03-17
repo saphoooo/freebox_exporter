@@ -159,7 +159,7 @@ func main() {
 	// SYSTEM temp gauges
 	systemTempGauges := promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "freebox_system_temp",
+			Name: "freebox_system_temp_celsius",
 			Help: "Temp sensors reported by system (in °C)",
 		},
 		[]string{
@@ -171,7 +171,7 @@ func main() {
 	// SYSTEM fan gauges
 	systemFanGauges := promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "freebox_system_fan",
+			Name: "freebox_system_fan_rpm",
 			Help: "Fan speed reported by system (in rpm)",
 		},
 		[]string{
@@ -189,7 +189,6 @@ func main() {
 			rateDownGauge.Set(float64(rateDown))
 			snrUpGauge.Set(float64(snrUp))
 			snrDownGauge.Set(float64(snrDown))
-			//fmt.Printf("rate_up: %d\nrate_down: %d\nsnr_up: %d\nsnr_down: %d\n", rateUp, rateDown, snrUp, snrDown)
 
 			// switch metrcis
 			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4 := getSwitch()
@@ -201,7 +200,6 @@ func main() {
 			tx3Gauge.Set(float64(tx3))
 			rx4Gauge.Set(float64(rx4))
 			tx4Gauge.Set(float64(tx4))
-			//fmt.Printf("rx1: %d\ntx1: %d\nrx2: %d\ntx2: %d\nrx3: %d\ntx3: %d\nrx4: %d\ntx4: %d\n", rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4)
 
 			// temps metrcis
 			cpum, cpub, sw, hdd, fanSpeed := getTemp()
@@ -210,7 +208,6 @@ func main() {
 			swGauge.Set(float64(sw))
 			hddGauge.Set(float64(hdd))
 			fanSpeedGauge.Set(float64(fanSpeed))
-			//fmt.Printf("cpum: %d\ncpub: %d\nsw: %d\nhdd: %d\nfan_speed: %d\n", cpum, cpub, sw, hdd, fanSpeed)
 
 			// net metrics
 			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown := getNet()
@@ -220,7 +217,6 @@ func main() {
 			netRateDownGauge.Set(float64(netRateDown))
 			vpnRateUpGauge.Set(float64(vpnRateUp))
 			vpnRateDownGauge.Set(float64(vpnRateDown))
-			//fmt.Printf("bw_up: %d\nbw_down: %d\nrate_up: %d\nrate_down: %d\nvpn_rate_up: %d\nvpn_rate_down: %d\n", bwUp, bwDown, rateUp, rateDown, vpnRateUp, vpnRateDown)
 
 			// lan metrics
 			lanAvailable := getLan()

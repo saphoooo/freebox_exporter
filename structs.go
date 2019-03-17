@@ -82,6 +82,7 @@ type lanHost struct {
 	Reachable   bool   `json:"reachable,omitempty"`
 	PrimaryName string `json:"primary_name,omitempty"`
 }
+
 type lan struct {
 	Success   bool      `json:"success"`
 	Result    []lanHost `json:"result"`
@@ -93,6 +94,7 @@ type idNameValue struct {
 	Name  string `json:"name,omitempty"`
 	Value int    `json:"value,omitempty"`
 }
+
 type systemR struct {
 	Sensors []idNameValue `json:"sensors"`
 	Fans    []idNameValue `json:"fans"`

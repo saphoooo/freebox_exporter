@@ -32,14 +32,11 @@ func getSystem() systemR {
 	if resp.StatusCode == 404 {
 		log.Fatal(resp.Status)
 	}
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	err = json.Unmarshal(body, &systemResp)
-
 	switch systemResp.ErrorCode {
 	case "auth_required":
 		sessToken = getSessToken(freeboxToken)

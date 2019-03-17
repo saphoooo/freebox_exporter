@@ -44,7 +44,6 @@ func getDsl() (int, int, int, int) {
 	if resp.StatusCode == 404 {
 		log.Fatal(resp.Status)
 	}
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
