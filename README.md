@@ -87,4 +87,4 @@ If you launch the application for the first time, you must allow it to access th
 - You have to authorize the application from the freebox front panel.
 - You have to modify the rights of the application to give it "Modification des réglages de la Freebox"
   
-Source: https://dev.freebox.fr/sdk/os/login/
+Source: https://dev.freebox.fr/sdk/os/
