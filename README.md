@@ -5,10 +5,17 @@ A prometheus exporter for freebox stats
 
 `freebox_exporter`
 
-## flags
+## Flags
+
 - `-version`: freebox API version (default v6)
 - `-endpoint`: freebox API url (default http://mafreebox.freebox.fr)
 - `-listen`: port for prometheus metrics (default :10001)
+
+## Preview
+
+Here's what you can get in Prometheus / Grafana with freebox_exporter:
+
+![Preview](https://user-images.githubusercontent.com/13923756/54585380-33318800-4a1a-11e9-8e9d-e434f275755c.png | width=600)
 
 # how to use it
 
