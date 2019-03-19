@@ -15,7 +15,7 @@ A prometheus exporter for freebox stats
 
 Here's what you can get in Prometheus / Grafana with freebox_exporter:
 
-![Preview](https://user-images.githubusercontent.com/13923756/54585380-33318800-4a1a-11e9-8e9d-e434f275755c.png | width=600)
+![Preview](https://user-images.githubusercontent.com/13923756/54585380-33318800-4a1a-11e9-8e9d-e434f275755c.png)
 
 # how to use it
 
