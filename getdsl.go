@@ -71,5 +71,8 @@ func getDsl() (int, int, int, int) {
 	case "internal_error":
 		log.Fatalln("Internal error")
 	}
+	if len(rrdTest.Result.Data) == 0 {
+		return 0, 0, 0, 0
+	}
 	return rrdTest.Result.Data[0]["rate_up"], rrdTest.Result.Data[0]["rate_down"], rrdTest.Result.Data[0]["snr_up"], rrdTest.Result.Data[0]["snr_down"]
 }
