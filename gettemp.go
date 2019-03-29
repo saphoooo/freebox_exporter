@@ -71,5 +71,9 @@ func getTemp() (int, int, int, int, int) {
 	case "internal_error":
 		log.Fatalln("Internal error")
 	}
-	return rrdTest.Result.Data[0]["cpum"], rrdTest.Result.Data[0]["cpub"], rrdTest.Result.Data[0]["sw"], rrdTest.Result.Data[0]["hdd"], rrdTest.Result.Data[0]["fan_speed"]
+	if len(rrdTest.Result.Data) > 0 {
+		return rrdTest.Result.Data[0]["cpum"], rrdTest.Result.Data[0]["cpub"], rrdTest.Result.Data[0]["sw"], rrdTest.Result.Data[0]["hdd"], rrdTest.Result.Data[0]["fan_speed"]
+	} else {
+		return 0,0,0,0,0
+	}
 }
