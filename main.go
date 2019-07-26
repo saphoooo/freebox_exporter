@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -48,6 +49,10 @@ func main() {
 	//freebox define uri for auth
 	fb := &freebox{
 		uri: mafreebox + "api/" + version + "/login/authorize/",
+	}
+
+	st := &store{
+		location: os.Getenv("HOME") + "/.freebox_token",
 	}
 
 	// RRD dsl gauge
@@ -190,14 +195,14 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown := getDsl(fb)
+			rateUp, rateDown, snrUp, snrDown := getDsl(fb, st)
 			rateUpGauge.Set(float64(rateUp))
 			rateDownGauge.Set(float64(rateDown))
 			snrUpGauge.Set(float64(snrUp))
 			snrDownGauge.Set(float64(snrDown))
 
 			// switch metrcis
-			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4 := getSwitch(fb)
+			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4 := getSwitch(fb, st)
 			rx1Gauge.Set(float64(rx1))
 			tx1Gauge.Set(float64(tx1))
 			rx2Gauge.Set(float64(rx2))
@@ -208,7 +213,7 @@ func main() {
 			tx4Gauge.Set(float64(tx4))
 
 			// temps metrcis
-			cpum, cpub, sw, hdd, fanSpeed := getTemp(fb)
+			cpum, cpub, sw, hdd, fanSpeed := getTemp(fb, st)
 			cpumGauge.Set(float64(cpum))
 			cpubGauge.Set(float64(cpub))
 			swGauge.Set(float64(sw))
@@ -216,7 +221,7 @@ func main() {
 			fanSpeedGauge.Set(float64(fanSpeed))
 
 			// net metrics
-			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown := getNet(fb)
+			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown := getNet(fb, st)
 			bwUpGauge.Set(float64(bwUp))
 			bwDownGauge.Set(float64(bwDown))
 			netRateUpGauge.Set(float64(netRateUp))
@@ -225,7 +230,7 @@ func main() {
 			vpnRateDownGauge.Set(float64(vpnRateDown))
 
 			// lan metrics
-			lanAvailable := getLan(fb)
+			lanAvailable := getLan(fb, st)
 			for _, v := range lanAvailable {
 				if v.Reachable {
 					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(1))
@@ -235,7 +240,7 @@ func main() {
 			}
 
 			// fan metrics
-			systemStats := getSystem(fb)
+			systemStats := getSystem(fb, st)
 			sensors := systemStats.Sensors
 			fans := systemStats.Fans
 			for _, v := range sensors {

@@ -167,13 +167,10 @@ func getSession(app, passwd string) {
 
 // getToken gets a valid session_token and asks for user to change
 // the set of permissions on the API
-func getToken(fb *freebox) string {
-	home := os.Getenv("HOME")
-	fileStore := home + "/.freebox_token"
-	if _, err := os.Stat(fileStore); os.IsNotExist(err) {
-		//fb := &freebox{
-		//	uri: mafreebox + "api/" + version + "/login/authorize/",
-		//}
+func getToken(fb *freebox, st *store) string {
+	//home := os.Getenv("HOME")
+	//fileStore := home + "/.freebox_token"
+	if _, err := os.Stat(st.location); os.IsNotExist(err) {
 		getGranted(fb)
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")

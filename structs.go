@@ -109,3 +109,7 @@ type system struct {
 type freebox struct {
 	uri string
 }
+
+type store struct {
+	location string
+}
