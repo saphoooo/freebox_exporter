@@ -15,7 +15,7 @@ import (
 func getTemp(fb *freebox, st *store) (int, int, int, int, int) {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken = getToken(fb, st)
+		sessToken, _ = getToken(fb, st)
 	}
 	if sessToken == "" {
 		sessToken = getSessToken(freeboxToken)

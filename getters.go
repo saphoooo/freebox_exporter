@@ -24,15 +24,24 @@ var (
 )
 
 // setFreeboxToken ensure that there is an active token for a call
-func setFreeboxToken(fb *freebox, st *store) string {
+func setFreeboxToken(fb *freebox, st *store) (string, error) {
+
 	token := os.Getenv("FREEBOX_TOKEN")
+	var err error
+
 	if token == "" {
-		sessToken = getToken(fb, st)
+		sessToken, err = getToken(fb, st)
+		if err != nil {
+			return "", err
+		}
 	}
+
 	if sessToken == "" {
 		sessToken = getSessToken(token)
 	}
-	return token
+
+	return token, nil
+
 }
 
 func newPostRequest() *postRequest {
@@ -45,7 +54,10 @@ func newPostRequest() *postRequest {
 
 // getDsl get dsl statistics
 func (d *database) getDsl(fb *freebox, st *store, pr *postRequest) (int, int, int, int, error) {
-	freeboxToken := setFreeboxToken(fb, st)
+	freeboxToken, err := setFreeboxToken(fb, st)
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
 	client := http.Client{}
 	r, err := json.Marshal(d)
 	if err != nil {

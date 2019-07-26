@@ -13,7 +13,7 @@ import (
 func getLan(fb *freebox, st *store) []lanHost {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken = getToken(fb, st)
+		sessToken, _ = getToken(fb, st)
 	}
 	if sessToken == "" {
 		sessToken = getSessToken(freeboxToken)

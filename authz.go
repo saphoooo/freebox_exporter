@@ -7,6 +7,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -36,20 +37,19 @@ func storeToken(t string) {
 
 // retreiveToken gets the token from file and
 // load it in environment variable
-func retreiveToken() {
-	home := os.Getenv("HOME")
-	fileStore := home + "/.freebox_token"
-	if _, err := os.Stat(fileStore); os.IsNotExist(err) {
-		log.Fatal(err)
+func retreiveToken(st *store) (string, error) {
+	if _, err := os.Stat(st.location); os.IsNotExist(err) {
+		return "", err
 	}
-	data, err := ioutil.ReadFile(fileStore)
+	data, err := ioutil.ReadFile(st.location)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	err = os.Setenv("FREEBOX_TOKEN", string(data))
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
+	return string(data), nil
 }
 
 // getTrackID is the initial request to freebox API
@@ -167,16 +167,17 @@ func getSession(app, passwd string) {
 
 // getToken gets a valid session_token and asks for user to change
 // the set of permissions on the API
-func getToken(fb *freebox, st *store) string {
-	//home := os.Getenv("HOME")
-	//fileStore := home + "/.freebox_token"
+func getToken(fb *freebox, st *store) (string, error) {
 	if _, err := os.Stat(st.location); os.IsNotExist(err) {
 		getGranted(fb)
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
 		_, _ = reader.ReadString('\n')
 	} else {
-		retreiveToken()
+		_, err := retreiveToken(st)
+		if err != nil {
+			return "", err
+		}
 	}
 	getChallenge()
 	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
@@ -184,9 +185,9 @@ func getToken(fb *freebox, st *store) string {
 	if token.Success {
 		fmt.Println("successfully authenticated")
 	} else {
-		log.Fatal(token.Msg)
+		return "", errors.New(token.Msg)
 	}
-	return token.Result.SessionToken
+	return token.Result.SessionToken, nil
 }
 
 // getSessToken gets a new token session when the old one has expired
