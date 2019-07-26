@@ -6,17 +6,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 )
 
 // getLan get lan statistics
 func getSystem(authInf *authInfo) systemR {
-	freeboxToken := os.Getenv("FREEBOX_TOKEN")
-	if freeboxToken == "" {
-		sessToken, _ = getToken(authInf)
-	}
-	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken, authInf)
+	freeboxToken, err := setFreeboxToken(authInf)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	client := http.Client{}
@@ -39,7 +35,10 @@ func getSystem(authInf *authInfo) systemR {
 	err = json.Unmarshal(body, &systemResp)
 	switch systemResp.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken, authInf)
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "invalid_token":
 		log.Fatalln("The app token you are trying to use is invalid or has been revoked")
 	case "pending_token":

@@ -7,19 +7,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
 // getNet get net statistics
 func getNet(authInf *authInfo) (int, int, int, int, int, int) {
-	freeboxToken := os.Getenv("FREEBOX_TOKEN")
-	if freeboxToken == "" {
-		sessToken, _ = getToken(authInf)
+	freeboxToken, err := setFreeboxToken(authInf)
+	if err != nil {
+		log.Fatal(err)
 	}
-	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken, authInf)
-	}
+
 	xnet := database{
 		DB:        "net",
 		Fields:    []string{"bw_up", "bw_down", "rate_up", "rate_down", "vpn_rate_up", "vpn_rate_down"},
@@ -51,7 +48,10 @@ func getNet(authInf *authInfo) (int, int, int, int, int, int) {
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken, authInf)
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "invalid_token":
 		log.Fatalln("The app token you are trying to use is invalid or has been revoked")
 	case "pending_token":

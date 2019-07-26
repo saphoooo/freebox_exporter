@@ -197,7 +197,7 @@ func getToken(authInf *authInfo) (string, error) {
 			return "", err
 		}
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
+		log.Println("check \"Modification des réglages de la Freebox\" and press enter")
 		_, _ = reader.ReadString('\n')
 	} else {
 		_, err := retreiveToken(authInf)
@@ -223,18 +223,18 @@ func getToken(authInf *authInfo) (string, error) {
 }
 
 // getSessToken gets a new token session when the old one has expired
-func getSessToken(t string, authInf *authInfo) string {
+func getSessToken(t string, authInf *authInfo) (string, error) {
 	err := getChallenge(authInf)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	password := hmacSha1(t, challenged.Result.Challenge)
 	err = getSession(authInf, password)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	if token.Success == false {
-		log.Fatal(token.Msg)
+		return "", errors.New(token.Msg)
 	}
-	return token.Result.SessionToken
+	return token.Result.SessionToken, nil
 }

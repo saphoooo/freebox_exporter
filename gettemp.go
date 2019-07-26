@@ -18,7 +18,11 @@ func getTemp(authInf *authInfo) (int, int, int, int, int) {
 		sessToken, _ = getToken(authInf)
 	}
 	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken, authInf)
+		var err error
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	xtemp := database{
 		DB:        "temp",
@@ -51,7 +55,10 @@ func getTemp(authInf *authInfo) (int, int, int, int, int) {
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken, authInf)
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "invalid_token":
 		log.Fatalln("The app token you are trying to use is invalid or has been revoked")
 	case "pending_token":

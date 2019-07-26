@@ -7,19 +7,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
 // getSwitch get switch statistics
 func getSwitch(authInf *authInfo) (int, int, int, int, int, int, int, int) {
-	freeboxToken := os.Getenv("FREEBOX_TOKEN")
-	if freeboxToken == "" {
-		sessToken, _ = getToken(authInf)
+	freeboxToken, err := setFreeboxToken(authInf)
+	if err != nil {
+		log.Fatal(err)
 	}
-	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken, authInf)
-	}
+
 	xswitch := database{
 		DB:        "switch",
 		Fields:    []string{"rx_1", "tx_1", "rx_2", "tx_2", "rx_3", "tx_3", "rx_4", "tx_4"},
@@ -51,7 +48,10 @@ func getSwitch(authInf *authInfo) (int, int, int, int, int, int, int, int) {
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken, authInf)
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "invalid_token":
 		log.Fatalln("The app token you are trying to use is invalid or has been revoked")
 	case "pending_token":

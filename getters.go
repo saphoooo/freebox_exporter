@@ -27,9 +27,9 @@ var (
 func setFreeboxToken(authInf *authInfo) (string, error) {
 
 	token := os.Getenv("FREEBOX_TOKEN")
-	var err error
 
 	if token == "" {
+		var err error
 		sessToken, err = getToken(authInf)
 		if err != nil {
 			return "", err
@@ -37,7 +37,11 @@ func setFreeboxToken(authInf *authInfo) (string, error) {
 	}
 
 	if sessToken == "" {
-		sessToken = getSessToken(token, authInf)
+		var err error
+		sessToken, err = getSessToken(token, authInf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return token, nil
@@ -83,7 +87,10 @@ func (d *database) getDsl(authInf *authInfo, pr *postRequest) (int, int, int, in
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken, authInf)
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "invalid_token":
 		return 0, 0, 0, 0, apiErrors["auth_required"]
 	case "pending_token":
