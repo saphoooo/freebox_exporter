@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 // setFreeboxToken ensure that there is an active token for a call
@@ -24,16 +23,10 @@ func setFreeboxToken(fb *freebox, st *store) string {
 }
 
 // getDsl get dsl statistics
-func getDsl(fb *freebox, st *store) (int, int, int, int) {
+func (d *database) getDsl(fb *freebox, st *store) (int, int, int, int) {
 	freeboxToken := setFreeboxToken(fb, st)
-	xdsl := database{
-		DB:        "dsl",
-		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
-		Precision: 10,
-		DateStart: int(time.Now().Unix() - 10),
-	}
 	client := http.Client{}
-	r, err := json.Marshal(xdsl)
+	r, err := json.Marshal(d)
 	if err != nil {
 		log.Fatalln(err)
 	}

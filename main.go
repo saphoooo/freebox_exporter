@@ -51,8 +51,17 @@ func main() {
 		uri: mafreebox + "api/" + version + "/login/authorize/",
 	}
 
+	// store is the location where the token is saved
 	st := &store{
 		location: os.Getenv("HOME") + "/.freebox_token",
+	}
+
+	// database used to get dsl stats
+	xdsl := &database{
+		DB:        "dsl",
+		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
 	}
 
 	// RRD dsl gauge
@@ -195,7 +204,7 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown := getDsl(fb, st)
+			rateUp, rateDown, snrUp, snrDown := xdsl.getDsl(fb, st)
 			rateUpGauge.Set(float64(rateUp))
 			rateDownGauge.Set(float64(rateDown))
 			snrUpGauge.Set(float64(snrUp))
