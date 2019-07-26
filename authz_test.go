@@ -176,3 +176,42 @@ func TestGetChallenge(t *testing.T) {
 		t.Error("Expected foobar, but got", challenged.Result.Challenge)
 	}
 }
+
+func TestHmacSha1(t *testing.T) {
+	hmac := hmacSha1("IOI", "foobar")
+	if hmac != "02fb876a39b64eddcfee3eaa69465cb3e8d53cde" {
+		t.Error("Expected 02fb876a39b64eddcfee3eaa69465cb3e8d53cde, but got", hmac)
+	}
+}
+
+func TestGetSession(t *testing.T) {
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		myToken := &sessionToken{
+			Success: true,
+		}
+		myToken.Result.Challenge = "foobar"
+		result, _ := json.Marshal(myToken)
+		fmt.Fprintln(w, string(result))
+	}))
+	defer ts.Close()
+
+	ai := &authInfo{
+		myAPI: api{
+			loginSession: ts.URL,
+		},
+	}
+
+	err := getSession(ai, "")
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+
+	if token.Success != true {
+		t.Error("Expected true, but got", token.Success)
+	}
+
+	if token.Result.Challenge != "foobar" {
+		t.Error("Expected foobar, but got", token.Result.Challenge)
+	}
+}

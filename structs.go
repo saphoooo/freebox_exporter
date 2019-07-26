@@ -107,8 +107,9 @@ type app struct {
 }
 
 type api struct {
-	authz string
-	login string
+	authz        string
+	login        string
+	loginSession string
 }
 
 type store struct {

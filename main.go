@@ -41,10 +41,12 @@ func main() {
 	}
 
 	// myAuthInfo contains all auth data
+	endpoint := mafreebox + "api/" + version + "/login/"
 	myAuthInfo := &authInfo{
 		myAPI: api{
-			authz: mafreebox + "api/" + version + "/login/authorize/",
-			login: mafreebox + "api/" + version + "/login/",
+			login:        endpoint,
+			authz:        endpoint + "authorize/",
+			loginSession: endpoint + "session/",
 		},
 		myStore: store{location: os.Getenv("HOME") + "/.freebox_token"},
 		myApp: app{
