@@ -54,11 +54,12 @@ func retreiveToken() {
 
 // getTrackID is the initial request to freebox API
 // get app_token and track_id
-func getTrackID(app *app) error {
-	//req, _ := json.Marshal(promExporter)
+func getTrackID(app *app, fb *freebox) error {
+
 	req, _ := json.Marshal(app)
 	buf := bytes.NewReader(req)
-	resp, err := http.Post(mafreebox+"api/"+version+"/login/authorize/", "application/json", buf)
+	//resp, err := http.Post(mafreebox+"api/"+version+"/login/authorize/", "application/json", buf)
+	resp, err := http.Post(fb.uri, "application/json", buf)
 	if err != nil {
 		return err
 	}
@@ -77,8 +78,8 @@ func getTrackID(app *app) error {
 
 // getGranted waits for user to validate on the freebox front panel
 // with a timeout of 15 seconds
-func getGranted() {
-	err := getTrackID(promExporter)
+func getGranted(fb *freebox) {
+	err := getTrackID(promExporter, fb)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -170,7 +171,10 @@ func getToken() string {
 	home := os.Getenv("HOME")
 	fileStore := home + "/.freebox_token"
 	if _, err := os.Stat(fileStore); os.IsNotExist(err) {
-		getGranted()
+		fb := &freebox{
+			uri: mafreebox + "api/" + version + "/login/authorize/",
+		}
+		getGranted(fb)
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
 		_, _ = reader.ReadString('\n')

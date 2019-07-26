@@ -105,3 +105,7 @@ type system struct {
 	Result    systemR `json:"result"`
 	ErrorCode string  `json:"error_code"`
 }
+
+type freebox struct {
+	uri string
+}
