@@ -11,19 +11,20 @@ import (
 )
 
 func TestRetreiveToken(t *testing.T) {
-	st := &store{
-		location: "/tmp/token",
+
+	ai := &authInfo{
+		myStore: store{location: "/tmp/token"},
 	}
 
-	_, err := retreiveToken(st)
+	_, err := retreiveToken(ai)
 	if err.Error() != "stat /tmp/token: no such file or directory" {
 		t.Error("Expected bla, but got", err)
 	}
 
-	ioutil.WriteFile(st.location, []byte("IOI"), 0600)
-	defer os.Remove(st.location)
+	ioutil.WriteFile(ai.myStore.location, []byte("IOI"), 0600)
+	defer os.Remove(ai.myStore.location)
 
-	token, err := retreiveToken(st)
+	token, err := retreiveToken(ai)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
@@ -43,25 +44,26 @@ func TestRetreiveToken(t *testing.T) {
 
 func TestStoreToken(t *testing.T) {
 	var token string
-	st := &store{}
 
-	err := storeToken(token, st)
+	ai := &authInfo{}
+
+	err := storeToken(token, ai)
 	if err.Error() != "token should not be blank" {
 		t.Error("Expected token should not be blank, but got", err)
 	}
 
 	token = "IOI"
-	err = storeToken(token, st)
+	err = storeToken(token, ai)
 	if err.Error() != "open : no such file or directory" {
 		t.Error("Expected open : no such file or directory, but got", err)
 	}
 
-	st.location = "/tmp/token"
-	err = storeToken(token, st)
+	ai.myStore.location = "/tmp/token"
+	err = storeToken(token, ai)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
-	defer os.Remove(st.location)
+	defer os.Remove(ai.myStore.location)
 
 	token = os.Getenv("FREEBOX_TOKEN")
 	if token != "IOI" {
@@ -69,7 +71,7 @@ func TestStoreToken(t *testing.T) {
 	}
 	os.Unsetenv("FREEBOX_TOKEN")
 
-	data, err := ioutil.ReadFile(st.location)
+	data, err := ioutil.ReadFile(ai.myStore.location)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
@@ -81,10 +83,8 @@ func TestStoreToken(t *testing.T) {
 }
 
 func TestGetTrackID(t *testing.T) {
-	app := &app{}
-	fb := &freebox{}
-	st := &store{
-		location: "/tmp/token",
+	ai := &authInfo{
+		myStore: store{location: "/tmp/token"},
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -98,12 +98,12 @@ func TestGetTrackID(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	fb.uri = ts.URL
-	err := getTrackID(app, fb, st)
+	ai.myFreebox.uri = ts.URL
+	err := getTrackID(ai)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
-	defer os.Remove(st.location)
+	defer os.Remove(ai.myStore.location)
 	defer os.Unsetenv("FREEBOX_TOKEN")
 
 	// as getTrackID have no return value
@@ -112,4 +112,35 @@ func TestGetTrackID(t *testing.T) {
 	if token != "IOI" {
 		t.Error("Expected IOI, but got", token)
 	}
+}
+
+func TestGetGranted(t *testing.T) {
+	/*
+			type grant struct {
+			Success bool `json:"success"`
+			Result  struct {
+				Status    string `json:"status"`
+				Challenge string `json:"challenge"`
+			} `json:"result"`
+		}
+	*/
+
+	/*
+		app := &app{}
+		fb := &freebox{}
+		st := &store{
+			location: "/tmp/token",
+		}
+
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			myGrant := &grant{
+				Success: true,
+			}
+			myGrant.Result.Status = "unknown"
+			myGrant.Result.Challenge = ""
+			result, _ := json.Marshal(myGrant)
+			fmt.Fprintln(w, string(result))
+		}))
+		defer ts.Close()
+	*/
 }

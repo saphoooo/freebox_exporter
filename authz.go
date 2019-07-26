@@ -18,7 +18,7 @@ import (
 )
 
 // storeToken stores app_token in ~/.freebox_token
-func storeToken(token string, st *store) error {
+func storeToken(token string, authInf *authInfo) error {
 	if token == "" {
 		return errors.New("token should not be blank")
 	}
@@ -28,8 +28,8 @@ func storeToken(token string, st *store) error {
 		return err
 	}
 
-	if _, err := os.Stat(st.location); os.IsNotExist(err) {
-		err := ioutil.WriteFile(st.location, []byte(token), 0600)
+	if _, err := os.Stat(authInf.myStore.location); os.IsNotExist(err) {
+		err := ioutil.WriteFile(authInf.myStore.location, []byte(token), 0600)
 		if err != nil {
 			return err
 		}
@@ -40,11 +40,11 @@ func storeToken(token string, st *store) error {
 
 // retreiveToken gets the token from file and
 // load it in environment variable
-func retreiveToken(st *store) (string, error) {
-	if _, err := os.Stat(st.location); os.IsNotExist(err) {
+func retreiveToken(authInf *authInfo) (string, error) {
+	if _, err := os.Stat(authInf.myStore.location); os.IsNotExist(err) {
 		return "", err
 	}
-	data, err := ioutil.ReadFile(st.location)
+	data, err := ioutil.ReadFile(authInf.myStore.location)
 	if err != nil {
 		return "", err
 	}
@@ -57,12 +57,12 @@ func retreiveToken(st *store) (string, error) {
 
 // getTrackID is the initial request to freebox API
 // get app_token and track_id
-func getTrackID(app *app, fb *freebox, st *store) error {
+func getTrackID(authInf *authInfo) error {
 
-	req, _ := json.Marshal(app)
+	req, _ := json.Marshal(authInf.myApp)
 	buf := bytes.NewReader(req)
 	//resp, err := http.Post(mafreebox+"api/"+version+"/login/authorize/", "application/json", buf)
-	resp, err := http.Post(fb.uri, "application/json", buf)
+	resp, err := http.Post(authInf.myFreebox.uri, "application/json", buf)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func getTrackID(app *app, fb *freebox, st *store) error {
 		return err
 	}
 
-	err = storeToken(trackID.Result.AppToken, st)
+	err = storeToken(trackID.Result.AppToken, authInf)
 	if err != nil {
 		return err
 	}
@@ -87,24 +87,30 @@ func getTrackID(app *app, fb *freebox, st *store) error {
 
 // getGranted waits for user to validate on the freebox front panel
 // with a timeout of 15 seconds
-func getGranted(fb *freebox, st *store, app *app) error {
-	err := getTrackID(app, fb, st)
+func getGranted(authInf *authInfo) error {
+	err := getTrackID(authInf)
 	if err != nil {
 		return err
 	}
 	//url := mafreebox + "api/" + version + "/login/authorize/" + strconv.Itoa(trackID.Result.TrackID)
-	url := fb.uri + strconv.Itoa(trackID.Result.TrackID)
+	url := authInf.myFreebox.uri + strconv.Itoa(trackID.Result.TrackID)
 	for i := 0; i < 15; i++ {
 		resp, err := http.Get(url)
 		if err != nil {
 			return err
 		}
+
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+
 		err = json.Unmarshal(body, &granted)
 		if err != nil {
 			return err
 		}
+
 		switch granted.Result.Status {
 		case "unknown":
 			return errors.New("the app_token is invalid or has been revoked")
@@ -151,9 +157,9 @@ func hmacSha1(appToken, challenge string) string {
 }
 
 // getSession gets a session with freeebox API
-func getSession(app, passwd string) {
+func getSession(appli, passwd string) {
 	s := session{
-		AppID:    app,
+		AppID:    appli,
 		Password: passwd,
 	}
 	req, _ := json.Marshal(s)
@@ -175,21 +181,24 @@ func getSession(app, passwd string) {
 
 // getToken gets a valid session_token and asks for user to change
 // the set of permissions on the API
-func getToken(fb *freebox, st *store, app *app) (string, error) {
-	if _, err := os.Stat(st.location); os.IsNotExist(err) {
-		getGranted(fb, st, app)
+func getToken(authInf *authInfo) (string, error) {
+	if _, err := os.Stat(authInf.myStore.location); os.IsNotExist(err) {
+		err = getGranted(authInf)
+		if err != nil {
+			return "", err
+		}
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
 		_, _ = reader.ReadString('\n')
 	} else {
-		_, err := retreiveToken(st)
+		_, err := retreiveToken(authInf)
 		if err != nil {
 			return "", err
 		}
 	}
 	getChallenge()
 	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
-	getSession(app.AppID, password)
+	getSession(authInf.myApp.AppID, password)
 	if token.Success {
 		fmt.Println("successfully authenticated")
 	} else {
@@ -199,10 +208,10 @@ func getToken(fb *freebox, st *store, app *app) (string, error) {
 }
 
 // getSessToken gets a new token session when the old one has expired
-func getSessToken(t string, app *app) string {
+func getSessToken(t string, authInf *authInfo) string {
 	getChallenge()
 	password := hmacSha1(t, challenged.Result.Challenge)
-	getSession(app.AppID, password)
+	getSession(authInf.myApp.AppID, password)
 	if token.Success == false {
 		log.Fatal(token.Msg)
 	}

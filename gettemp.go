@@ -12,13 +12,13 @@ import (
 )
 
 // getTemp get temp statistics
-func getTemp(fb *freebox, st *store, app *app) (int, int, int, int, int) {
+func getTemp(authInf *authInfo) (int, int, int, int, int) {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken, _ = getToken(fb, st, app)
+		sessToken, _ = getToken(authInf)
 	}
 	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken, app)
+		sessToken = getSessToken(freeboxToken, authInf)
 	}
 	xtemp := database{
 		DB:        "temp",
@@ -51,7 +51,7 @@ func getTemp(fb *freebox, st *store, app *app) (int, int, int, int, int) {
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken, app)
+		sessToken = getSessToken(freeboxToken, authInf)
 	case "invalid_token":
 		log.Fatalln("The app token you are trying to use is invalid or has been revoked")
 	case "pending_token":

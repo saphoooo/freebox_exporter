@@ -1,12 +1,5 @@
 package main
 
-type app struct {
-	AppID      string `json:"app_id"`
-	AppName    string `json:"app_name"`
-	AppVersion string `json:"app_version"`
-	DeviceName string `json:"device_name"`
-}
-
 type track struct {
 	Success bool `json:"success"`
 	Result  struct {
@@ -106,6 +99,13 @@ type system struct {
 	ErrorCode string  `json:"error_code"`
 }
 
+type app struct {
+	AppID      string `json:"app_id"`
+	AppName    string `json:"app_name"`
+	AppVersion string `json:"app_version"`
+	DeviceName string `json:"device_name"`
+}
+
 type freebox struct {
 	uri string
 }
@@ -115,7 +115,11 @@ type store struct {
 }
 
 type postRequest struct {
-	method string
-	url    string
-	header string
+	method, url, header string
+}
+
+type authInfo struct {
+	myApp     app
+	myFreebox freebox
+	myStore   store
 }

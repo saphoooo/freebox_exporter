@@ -10,13 +10,13 @@ import (
 )
 
 // getLan get lan statistics
-func getLan(fb *freebox, st *store, app *app) []lanHost {
+func getLan(authInf *authInfo) []lanHost {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken, _ = getToken(fb, st, app)
+		sessToken, _ = getToken(authInf)
 	}
 	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken, app)
+		sessToken = getSessToken(freeboxToken, authInf)
 	}
 
 	client := http.Client{}
@@ -40,7 +40,7 @@ func getLan(fb *freebox, st *store, app *app) []lanHost {
 	err = json.Unmarshal(body, &lanResp)
 	switch lanResp.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken, app)
+		sessToken = getSessToken(freeboxToken, authInf)
 	case "invalid_token":
 		log.Fatalln("The app token you are trying to use is invalid or has been revoked")
 	case "pending_token":

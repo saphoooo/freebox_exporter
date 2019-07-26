@@ -40,14 +40,16 @@ func main() {
 		mafreebox = mafreebox + "/"
 	}
 
-	//freebox define uri for auth
-	fb := &freebox{
-		uri: mafreebox + "api/" + version + "/login/authorize/",
-	}
-
-	// store is the location where the token is saved
-	st := &store{
-		location: os.Getenv("HOME") + "/.freebox_token",
+	// myAuthInfo contains all auth data
+	myAuthInfo := &authInfo{
+		myFreebox: freebox{uri: mafreebox + "api/" + version + "/login/authorize/"},
+		myStore:   store{location: os.Getenv("HOME") + "/.freebox_token"},
+		myApp: app{
+			AppID:      "fr.freebox.exporter",
+			AppName:    "prometheus-exporter",
+			AppVersion: "0.4",
+			DeviceName: "local",
+		},
 	}
 
 	// database used to get dsl stats
@@ -59,13 +61,6 @@ func main() {
 	}
 
 	pr := newPostRequest()
-
-	promExporter := &app{
-		AppID:      "fr.freebox.exporter",
-		AppName:    "prom_exporter",
-		AppVersion: "0.4",
-		DeviceName: "laptop",
-	}
 
 	// RRD dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
@@ -207,7 +202,7 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown, err := xdsl.getDsl(fb, st, pr, promExporter)
+			rateUp, rateDown, snrUp, snrDown, err := xdsl.getDsl(myAuthInfo, pr)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -217,7 +212,7 @@ func main() {
 			snrDownGauge.Set(float64(snrDown))
 
 			// switch metrcis
-			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4 := getSwitch(fb, st, promExporter)
+			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4 := getSwitch(myAuthInfo)
 			rx1Gauge.Set(float64(rx1))
 			tx1Gauge.Set(float64(tx1))
 			rx2Gauge.Set(float64(rx2))
@@ -228,7 +223,7 @@ func main() {
 			tx4Gauge.Set(float64(tx4))
 
 			// temps metrcis
-			cpum, cpub, sw, hdd, fanSpeed := getTemp(fb, st, promExporter)
+			cpum, cpub, sw, hdd, fanSpeed := getTemp(myAuthInfo)
 			cpumGauge.Set(float64(cpum))
 			cpubGauge.Set(float64(cpub))
 			swGauge.Set(float64(sw))
@@ -236,7 +231,7 @@ func main() {
 			fanSpeedGauge.Set(float64(fanSpeed))
 
 			// net metrics
-			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown := getNet(fb, st, promExporter)
+			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown := getNet(myAuthInfo)
 			bwUpGauge.Set(float64(bwUp))
 			bwDownGauge.Set(float64(bwDown))
 			netRateUpGauge.Set(float64(netRateUp))
@@ -245,7 +240,7 @@ func main() {
 			vpnRateDownGauge.Set(float64(vpnRateDown))
 
 			// lan metrics
-			lanAvailable := getLan(fb, st, promExporter)
+			lanAvailable := getLan(myAuthInfo)
 			for _, v := range lanAvailable {
 				if v.Reachable {
 					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(1))
@@ -255,7 +250,7 @@ func main() {
 			}
 
 			// fan metrics
-			systemStats := getSystem(fb, st, promExporter)
+			systemStats := getSystem(myAuthInfo)
 			sensors := systemStats.Sensors
 			fans := systemStats.Fans
 			for _, v := range sensors {
