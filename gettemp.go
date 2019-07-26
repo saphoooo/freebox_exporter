@@ -12,10 +12,10 @@ import (
 )
 
 // getTemp get temp statistics
-func getTemp() (int, int, int, int, int) {
+func getTemp(fb *freebox) (int, int, int, int, int) {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken = getToken()
+		sessToken = getToken(fb)
 	}
 	if sessToken == "" {
 		sessToken = getSessToken(freeboxToken)

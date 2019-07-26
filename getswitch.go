@@ -12,10 +12,10 @@ import (
 )
 
 // getSwitch get switch statistics
-func getSwitch() (int, int, int, int, int, int, int, int) {
+func getSwitch(fb *freebox) (int, int, int, int, int, int, int, int) {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken = getToken()
+		sessToken = getToken(fb)
 	}
 	if sessToken == "" {
 		sessToken = getSessToken(freeboxToken)

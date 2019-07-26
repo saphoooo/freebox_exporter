@@ -10,10 +10,10 @@ import (
 )
 
 // getLan get lan statistics
-func getLan() []lanHost {
+func getLan(fb *freebox) []lanHost {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken = getToken()
+		sessToken = getToken(fb)
 	}
 	if sessToken == "" {
 		sessToken = getSessToken(freeboxToken)

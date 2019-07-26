@@ -12,10 +12,10 @@ import (
 )
 
 // getNet get net statistics
-func getNet() (int, int, int, int, int, int) {
+func getNet(fb *freebox) (int, int, int, int, int, int) {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken = getToken()
+		sessToken = getToken(fb)
 	}
 	if sessToken == "" {
 		sessToken = getSessToken(freeboxToken)

@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-func setFreeboxToken() string {
+func setFreeboxToken(fb *freebox) string {
 	token := os.Getenv("FREEBOX_TOKEN")
 	if token == "" {
-		sessToken = getToken()
+		sessToken = getToken(fb)
 	}
 	if sessToken == "" {
 		sessToken = getSessToken(token)
@@ -23,8 +23,8 @@ func setFreeboxToken() string {
 }
 
 // getDsl get dsl statistics
-func getDsl() (int, int, int, int) {
-	freeboxToken := setFreeboxToken()
+func getDsl(fb *freebox) (int, int, int, int) {
+	freeboxToken := setFreeboxToken(fb)
 	xdsl := database{
 		DB:        "dsl",
 		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
