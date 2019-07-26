@@ -98,7 +98,7 @@ func TestGetTrackID(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	ai.myFreebox.uri = ts.URL
+	ai.myAPI.authz = ts.URL
 	err := getTrackID(ai)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
@@ -143,4 +143,36 @@ func TestGetGranted(t *testing.T) {
 		}))
 		defer ts.Close()
 	*/
+}
+
+func TestGetChallenge(t *testing.T) {
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		myChall := &challenge{
+			Success: true,
+		}
+		myChall.Result.Challenge = "foobar"
+		result, _ := json.Marshal(myChall)
+		fmt.Fprintln(w, string(result))
+	}))
+	defer ts.Close()
+
+	ai := &authInfo{
+		myAPI: api{
+			login: ts.URL,
+		},
+	}
+
+	err := getChallenge(ai)
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+
+	if challenged.Success != true {
+		t.Error("Expected true, but got", challenged.Success)
+	}
+
+	if challenged.Result.Challenge != "foobar" {
+		t.Error("Expected foobar, but got", challenged.Result.Challenge)
+	}
 }

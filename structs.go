@@ -19,7 +19,7 @@ type grant struct {
 type challenge struct {
 	Success bool `json:"success"`
 	Result  struct {
-		LoggedIN  bool   `json:"logged_in"`
+		LoggedIN  bool   `json:"logged_in,omitempty"`
 		Challenge string `json:"challenge"`
 	} `json:"result"`
 }
@@ -106,20 +106,21 @@ type app struct {
 	DeviceName string `json:"device_name"`
 }
 
-type freebox struct {
-	uri string
+type api struct {
+	authz string
+	login string
 }
 
 type store struct {
 	location string
 }
 
-type postRequest struct {
-	method, url, header string
+type authInfo struct {
+	myApp   app
+	myAPI   api
+	myStore store
 }
 
-type authInfo struct {
-	myApp     app
-	myFreebox freebox
-	myStore   store
+type postRequest struct {
+	method, url, header string
 }

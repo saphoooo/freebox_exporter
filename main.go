@@ -42,8 +42,11 @@ func main() {
 
 	// myAuthInfo contains all auth data
 	myAuthInfo := &authInfo{
-		myFreebox: freebox{uri: mafreebox + "api/" + version + "/login/authorize/"},
-		myStore:   store{location: os.Getenv("HOME") + "/.freebox_token"},
+		myAPI: api{
+			authz: mafreebox + "api/" + version + "/login/authorize/",
+			login: mafreebox + "api/" + version + "/login/",
+		},
+		myStore: store{location: os.Getenv("HOME") + "/.freebox_token"},
 		myApp: app{
 			AppID:      "fr.freebox.exporter",
 			AppName:    "prometheus-exporter",

@@ -62,7 +62,7 @@ func getTrackID(authInf *authInfo) error {
 	req, _ := json.Marshal(authInf.myApp)
 	buf := bytes.NewReader(req)
 	//resp, err := http.Post(mafreebox+"api/"+version+"/login/authorize/", "application/json", buf)
-	resp, err := http.Post(authInf.myFreebox.uri, "application/json", buf)
+	resp, err := http.Post(authInf.myAPI.authz, "application/json", buf)
 	if err != nil {
 		return err
 	}
@@ -93,7 +93,7 @@ func getGranted(authInf *authInfo) error {
 		return err
 	}
 	//url := mafreebox + "api/" + version + "/login/authorize/" + strconv.Itoa(trackID.Result.TrackID)
-	url := authInf.myFreebox.uri + strconv.Itoa(trackID.Result.TrackID)
+	url := authInf.myAPI.authz + strconv.Itoa(trackID.Result.TrackID)
 	for i := 0; i < 15; i++ {
 		resp, err := http.Get(url)
 		if err != nil {
@@ -130,21 +130,23 @@ func getGranted(authInf *authInfo) error {
 }
 
 // getChallenge makes sure the app always has a valid challenge
-func getChallenge() {
-	resp, err := http.Get(mafreebox + "api/" + version + "/login/")
+func getChallenge(authInf *authInfo) error {
+	//resp, err := http.Get(mafreebox + "api/" + version + "/login/")
+	resp, err := http.Get(authInf.myAPI.login)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 
 	err = json.Unmarshal(body, &challenged)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
+	return nil
 }
 
 // hmacSha1 encodes app_token in hmac-sha1 and stores it in password
@@ -196,7 +198,10 @@ func getToken(authInf *authInfo) (string, error) {
 			return "", err
 		}
 	}
-	getChallenge()
+	err := getChallenge(authInf)
+	if err != nil {
+		return "", err
+	}
 	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
 	getSession(authInf.myApp.AppID, password)
 	if token.Success {
@@ -209,7 +214,10 @@ func getToken(authInf *authInfo) (string, error) {
 
 // getSessToken gets a new token session when the old one has expired
 func getSessToken(t string, authInf *authInfo) string {
-	getChallenge()
+	err := getChallenge(authInf)
+	if err != nil {
+		log.Fatal(err)
+	}
 	password := hmacSha1(t, challenged.Result.Challenge)
 	getSession(authInf.myApp.AppID, password)
 	if token.Success == false {
