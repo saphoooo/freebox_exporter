@@ -113,3 +113,9 @@ type freebox struct {
 type store struct {
 	location string
 }
+
+type postRequest struct {
+	method string
+	url    string
+	header string
+}

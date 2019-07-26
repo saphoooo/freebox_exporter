@@ -64,6 +64,8 @@ func main() {
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
+	pr := newPostRequest()
+
 	// RRD dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",
@@ -204,7 +206,7 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown := xdsl.getDsl(fb, st)
+			rateUp, rateDown, snrUp, snrDown := xdsl.getDsl(fb, st, pr)
 			rateUpGauge.Set(float64(rateUp))
 			rateDownGauge.Set(float64(rateDown))
 			snrUpGauge.Set(float64(snrUp))

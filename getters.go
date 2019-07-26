@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -22,8 +21,16 @@ func setFreeboxToken(fb *freebox, st *store) string {
 	return token
 }
 
+func newPostRequest() *postRequest {
+	return &postRequest{
+		method: "POST",
+		url:    mafreebox + "api/" + version + "/rrd/",
+		header: "X-Fbx-App-Auth",
+	}
+}
+
 // getDsl get dsl statistics
-func (d *database) getDsl(fb *freebox, st *store) (int, int, int, int) {
+func (d *database) getDsl(fb *freebox, st *store, pr *postRequest) (int, int, int, int) {
 	freeboxToken := setFreeboxToken(fb, st)
 	client := http.Client{}
 	r, err := json.Marshal(d)
@@ -31,11 +38,12 @@ func (d *database) getDsl(fb *freebox, st *store) (int, int, int, int) {
 		log.Fatalln(err)
 	}
 	buf := bytes.NewReader(r)
-	req, err := http.NewRequest("POST", fmt.Sprintf("%sapi/%s/rrd/", mafreebox, version), buf)
+	//req, err := http.NewRequest("POST", fmt.Sprintf("%sapi/%s/rrd/", mafreebox, version), buf)
+	req, err := http.NewRequest(pr.method, pr.url, buf)
 	if err != nil {
 		log.Fatal(err)
 	}
-	req.Header.Add("X-Fbx-App-Auth", sessToken)
+	req.Header.Add(pr.header, sessToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
