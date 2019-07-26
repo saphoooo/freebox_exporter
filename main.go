@@ -206,7 +206,10 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown := xdsl.getDsl(fb, st, pr)
+			rateUp, rateDown, snrUp, snrDown, err := xdsl.getDsl(fb, st, pr)
+			if err != nil {
+				log.Fatalln(err)
+			}
 			rateUpGauge.Set(float64(rateUp))
 			rateDownGauge.Set(float64(rateDown))
 			snrUpGauge.Set(float64(snrUp))
