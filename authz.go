@@ -18,21 +18,24 @@ import (
 )
 
 // storeToken stores app_token in ~/.freebox_token
-func storeToken(t string) {
-	err := os.Setenv("FREEBOX_TOKEN", t)
+func storeToken(token string, st *store) error {
+	if token == "" {
+		return errors.New("token should not be blank")
+	}
+
+	err := os.Setenv("FREEBOX_TOKEN", token)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
-	home := os.Getenv("HOME")
-	fileStore := home + "/.freebox_token"
-	if _, err := os.Stat(fileStore); os.IsNotExist(err) {
-		err := ioutil.WriteFile(fileStore, []byte(t), 0600)
+
+	if _, err := os.Stat(st.location); os.IsNotExist(err) {
+		err := ioutil.WriteFile(st.location, []byte(token), 0600)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-	} else {
-		log.Println(fileStore, "already exists")
 	}
+
+	return nil
 }
 
 // retreiveToken gets the token from file and
@@ -54,7 +57,7 @@ func retreiveToken(st *store) (string, error) {
 
 // getTrackID is the initial request to freebox API
 // get app_token and track_id
-func getTrackID(app *app, fb *freebox) error {
+func getTrackID(app *app, fb *freebox, st *store) error {
 
 	req, _ := json.Marshal(app)
 	buf := bytes.NewReader(req)
@@ -72,14 +75,19 @@ func getTrackID(app *app, fb *freebox) error {
 	if err != nil {
 		return err
 	}
-	storeToken(trackID.Result.AppToken)
+
+	err = storeToken(trackID.Result.AppToken, st)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // getGranted waits for user to validate on the freebox front panel
 // with a timeout of 15 seconds
-func getGranted(fb *freebox) {
-	err := getTrackID(promExporter, fb)
+func getGranted(fb *freebox, st *store) {
+	err := getTrackID(promExporter, fb, st)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -169,7 +177,7 @@ func getSession(app, passwd string) {
 // the set of permissions on the API
 func getToken(fb *freebox, st *store) (string, error) {
 	if _, err := os.Stat(st.location); os.IsNotExist(err) {
-		getGranted(fb)
+		getGranted(fb, st)
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
 		_, _ = reader.ReadString('\n')

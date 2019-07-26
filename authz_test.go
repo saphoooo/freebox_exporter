@@ -36,3 +36,42 @@ func TestRetreiveToken(t *testing.T) {
 
 	os.Unsetenv("FREEBOX_TOKEN")
 }
+
+func TestStoreToken(t *testing.T) {
+	var token string
+	st := &store{}
+
+	err := storeToken(token, st)
+	if err.Error() != "token should not be blank" {
+		t.Error("Expected token should not be blank, but got", err)
+	}
+
+	token = "IOI"
+	err = storeToken(token, st)
+	if err.Error() != "open : no such file or directory" {
+		t.Error("Expected open : no such file or directory, but got", err)
+	}
+
+	st.location = "/tmp/token"
+	err = storeToken(token, st)
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+	defer os.Remove(st.location)
+
+	token = os.Getenv("FREEBOX_TOKEN")
+	if token != "IOI" {
+		t.Error("Expected IOI, but got", token)
+	}
+	os.Unsetenv("FREEBOX_TOKEN")
+
+	data, err := ioutil.ReadFile(st.location)
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+
+	if string(data) != "IOI" {
+		t.Error("Expected IOI, but got", string(data))
+	}
+
+}
