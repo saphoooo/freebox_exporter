@@ -24,20 +24,20 @@ var (
 )
 
 // setFreeboxToken ensure that there is an active token for a call
-func setFreeboxToken(fb *freebox, st *store) (string, error) {
+func setFreeboxToken(fb *freebox, st *store, app *app) (string, error) {
 
 	token := os.Getenv("FREEBOX_TOKEN")
 	var err error
 
 	if token == "" {
-		sessToken, err = getToken(fb, st)
+		sessToken, err = getToken(fb, st, app)
 		if err != nil {
 			return "", err
 		}
 	}
 
 	if sessToken == "" {
-		sessToken = getSessToken(token)
+		sessToken = getSessToken(token, app)
 	}
 
 	return token, nil
@@ -53,8 +53,8 @@ func newPostRequest() *postRequest {
 }
 
 // getDsl get dsl statistics
-func (d *database) getDsl(fb *freebox, st *store, pr *postRequest) (int, int, int, int, error) {
-	freeboxToken, err := setFreeboxToken(fb, st)
+func (d *database) getDsl(fb *freebox, st *store, pr *postRequest, app *app) (int, int, int, int, error) {
+	freeboxToken, err := setFreeboxToken(fb, st, app)
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
@@ -83,7 +83,7 @@ func (d *database) getDsl(fb *freebox, st *store, pr *postRequest) (int, int, in
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken)
+		sessToken = getSessToken(freeboxToken, app)
 	case "invalid_token":
 		return 0, 0, 0, 0, apiErrors["auth_required"]
 	case "pending_token":

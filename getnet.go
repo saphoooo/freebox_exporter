@@ -12,13 +12,13 @@ import (
 )
 
 // getNet get net statistics
-func getNet(fb *freebox, st *store) (int, int, int, int, int, int) {
+func getNet(fb *freebox, st *store, app *app) (int, int, int, int, int, int) {
 	freeboxToken := os.Getenv("FREEBOX_TOKEN")
 	if freeboxToken == "" {
-		sessToken, _ = getToken(fb, st)
+		sessToken, _ = getToken(fb, st, app)
 	}
 	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken)
+		sessToken = getSessToken(freeboxToken, app)
 	}
 	xnet := database{
 		DB:        "net",
@@ -51,7 +51,7 @@ func getNet(fb *freebox, st *store) (int, int, int, int, int, int) {
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken = getSessToken(freeboxToken)
+		sessToken = getSessToken(freeboxToken, app)
 	case "invalid_token":
 		log.Fatalln("The app token you are trying to use is invalid or has been revoked")
 	case "pending_token":

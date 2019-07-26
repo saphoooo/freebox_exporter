@@ -87,41 +87,40 @@ func getTrackID(app *app, fb *freebox, st *store) error {
 
 // getGranted waits for user to validate on the freebox front panel
 // with a timeout of 15 seconds
-func getGranted(fb *freebox, st *store) {
-	err := getTrackID(promExporter, fb, st)
+func getGranted(fb *freebox, st *store, app *app) error {
+	err := getTrackID(app, fb, st)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
-	url := mafreebox + "api/" + version + "/login/authorize/" + strconv.Itoa(trackID.Result.TrackID)
+	//url := mafreebox + "api/" + version + "/login/authorize/" + strconv.Itoa(trackID.Result.TrackID)
+	url := fb.uri + strconv.Itoa(trackID.Result.TrackID)
 	for i := 0; i < 15; i++ {
 		resp, err := http.Get(url)
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		err = json.Unmarshal(body, &granted)
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 		switch granted.Result.Status {
 		case "unknown":
-			log.Println("the app_token is invalid or has been revoked")
-			os.Exit(1)
+			return errors.New("the app_token is invalid or has been revoked")
 		case "pending":
 			log.Println("the user has not confirmed the authorization request yet")
 		case "timeout":
-			log.Println("the user did not confirmed the authorization within the given time")
-			os.Exit(1)
+			return errors.New("the user did not confirmed the authorization within the given time")
 		case "granted":
 			log.Println("the app_token is valid and can be used to open a session")
 			i = 15
 		case "denied":
-			log.Println("the user denied the authorization request")
-			os.Exit(1)
+			return errors.New("the user denied the authorization request")
 		}
 		time.Sleep(1 * time.Second)
 	}
+	return nil
 }
 
 // getChallenge makes sure the app always has a valid challenge
@@ -176,9 +175,9 @@ func getSession(app, passwd string) {
 
 // getToken gets a valid session_token and asks for user to change
 // the set of permissions on the API
-func getToken(fb *freebox, st *store) (string, error) {
+func getToken(fb *freebox, st *store, app *app) (string, error) {
 	if _, err := os.Stat(st.location); os.IsNotExist(err) {
-		getGranted(fb, st)
+		getGranted(fb, st, app)
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("check \"Modification des réglages de la Freebox\" and press enter")
 		_, _ = reader.ReadString('\n')
@@ -190,7 +189,7 @@ func getToken(fb *freebox, st *store) (string, error) {
 	}
 	getChallenge()
 	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
-	getSession(promExporter.AppID, password)
+	getSession(app.AppID, password)
 	if token.Success {
 		fmt.Println("successfully authenticated")
 	} else {
@@ -200,10 +199,10 @@ func getToken(fb *freebox, st *store) (string, error) {
 }
 
 // getSessToken gets a new token session when the old one has expired
-func getSessToken(t string) string {
+func getSessToken(t string, app *app) string {
 	getChallenge()
 	password := hmacSha1(t, challenged.Result.Challenge)
-	getSession(promExporter.AppID, password)
+	getSession(app.AppID, password)
 	if token.Success == false {
 		log.Fatal(token.Msg)
 	}
