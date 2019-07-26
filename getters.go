@@ -1,15 +1,30 @@
 package main
 
-/*
-// getDsl get dsl statistics
-func getDsl() (int, int, int, int) {
-	freeboxToken := os.Getenv("FREEBOX_TOKEN")
-	if freeboxToken == "" {
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"time"
+)
+
+func setFreeboxToken() string {
+	token := os.Getenv("FREEBOX_TOKEN")
+	if token == "" {
 		sessToken = getToken()
 	}
 	if sessToken == "" {
-		sessToken = getSessToken(freeboxToken)
+		sessToken = getSessToken(token)
 	}
+	return token
+}
+
+// getDsl get dsl statistics
+func getDsl() (int, int, int, int) {
+	freeboxToken := setFreeboxToken()
 	xdsl := database{
 		DB:        "dsl",
 		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
@@ -66,4 +81,3 @@ func getDsl() (int, int, int, int) {
 	}
 	return rrdTest.Result.Data[0]["rate_up"], rrdTest.Result.Data[0]["rate_down"], rrdTest.Result.Data[0]["snr_up"], rrdTest.Result.Data[0]["snr_down"]
 }
-*/

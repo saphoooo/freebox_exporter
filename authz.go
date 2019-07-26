@@ -54,29 +54,34 @@ func retreiveToken() {
 
 // getTrackID is the initial request to freebox API
 // get app_token and track_id
-func getTrackID() {
-	req, _ := json.Marshal(promExporter)
+func getTrackID(app *app) error {
+	//req, _ := json.Marshal(promExporter)
+	req, _ := json.Marshal(app)
 	buf := bytes.NewReader(req)
 	resp, err := http.Post(mafreebox+"api/"+version+"/login/authorize/", "application/json", buf)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 
 	err = json.Unmarshal(body, &trackID)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 	storeToken(trackID.Result.AppToken)
+	return nil
 }
 
 // getGranted waits for user to validate on the freebox front panel
 // with a timeout of 15 seconds
 func getGranted() {
-	getTrackID()
+	err := getTrackID(promExporter)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	url := mafreebox + "api/" + version + "/login/authorize/" + strconv.Itoa(trackID.Result.TrackID)
 	for i := 0; i < 15; i++ {
 		resp, err := http.Get(url)

@@ -23,7 +23,7 @@ var (
 	rrdTest      *rrd
 	lanResp      *lan
 	systemResp   *system
-	promExporter = app{
+	promExporter = &app{
 		AppID:      "fr.freebox.exporter",
 		AppName:    "prom_exporter",
 		AppVersion: "0.1",
