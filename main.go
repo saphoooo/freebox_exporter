@@ -65,7 +65,15 @@ func main() {
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
-	pr := newPostRequest()
+	// database used to get temp stats
+	xtemp := database{
+		DB:        "temp",
+		Fields:    []string{"cpum", "cpub", "sw", "hdd", "fan_speed"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
+	}
+
+	myPostRequest := newPostRequest()
 
 	// RRD dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
@@ -207,7 +215,7 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown, err := xdsl.getDsl(myAuthInfo, pr)
+			rateUp, rateDown, snrUp, snrDown, err := xdsl.getDsl(myAuthInfo, myPostRequest)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -228,7 +236,10 @@ func main() {
 			tx4Gauge.Set(float64(tx4))
 
 			// temps metrcis
-			cpum, cpub, sw, hdd, fanSpeed := getTemp(myAuthInfo)
+			cpum, cpub, sw, hdd, fanSpeed, err := xtemp.getTemp(myAuthInfo, myPostRequest)
+			if err != nil {
+				log.Fatal(err)
+			}
 			cpumGauge.Set(float64(cpum))
 			cpubGauge.Set(float64(cpub))
 			swGauge.Set(float64(sw))
