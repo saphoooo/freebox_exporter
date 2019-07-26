@@ -66,6 +66,7 @@ func getTrackID(app *app, fb *freebox, st *store) error {
 	if err != nil {
 		return err
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err

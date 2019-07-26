@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 )
@@ -74,4 +78,38 @@ func TestStoreToken(t *testing.T) {
 		t.Error("Expected IOI, but got", string(data))
 	}
 
+}
+
+func TestGetTrackID(t *testing.T) {
+	app := &app{}
+	fb := &freebox{}
+	st := &store{
+		location: "/tmp/token",
+	}
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		myTrack := track{
+			Success: true,
+		}
+		myTrack.Result.AppToken = "IOI"
+		myTrack.Result.TrackID = 101
+		result, _ := json.Marshal(myTrack)
+		fmt.Fprintln(w, string(result))
+	}))
+	defer ts.Close()
+
+	fb.uri = ts.URL
+	err := getTrackID(app, fb, st)
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+	defer os.Remove(st.location)
+	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	// as getTrackID have no return value
+	// the result of storeToken func is checked instead
+	token := os.Getenv("FREEBOX_TOKEN")
+	if token != "IOI" {
+		t.Error("Expected IOI, but got", token)
+	}
 }
