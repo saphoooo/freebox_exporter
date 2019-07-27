@@ -167,7 +167,7 @@ func TestGetChallenge(t *testing.T) {
 		},
 	}
 
-	err := getChallenge(ai)
+	challenged, err := getChallenge(ai)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}

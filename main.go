@@ -12,12 +12,11 @@ import (
 )
 
 var (
-	mafreebox  string
-	version    string
-	listen     string
-	challenged *challenge
-	rrdTest    *rrd
-	sessToken  string
+	mafreebox string
+	version   string
+	listen    string
+	rrdTest   *rrd
+	sessToken string
 )
 
 func init() {

@@ -132,23 +132,24 @@ func getGranted(authInf *authInfo) error {
 }
 
 // getChallenge makes sure the app always has a valid challenge
-func getChallenge(authInf *authInfo) error {
+func getChallenge(authInf *authInfo) (*challenge, error) {
 	//resp, err := http.Get(mafreebox + "api/" + version + "/login/")
 	resp, err := http.Get(authInf.myAPI.login)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	challenged := challenge{}
 	err = json.Unmarshal(body, &challenged)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &challenged, nil
 }
 
 // hmacSha1 encodes app_token in hmac-sha1 and stores it in password
@@ -208,7 +209,7 @@ func getToken(authInf *authInfo) (string, error) {
 			return "", err
 		}
 	}
-	err := getChallenge(authInf)
+	challenged, err := getChallenge(authInf)
 	if err != nil {
 		return "", err
 	}
@@ -227,7 +228,7 @@ func getToken(authInf *authInfo) (string, error) {
 
 // getSessToken gets a new token session when the old one has expired
 func getSessToken(t string, authInf *authInfo) (string, error) {
-	err := getChallenge(authInf)
+	challenged, err := getChallenge(authInf)
 	if err != nil {
 		return "", err
 	}
