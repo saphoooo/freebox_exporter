@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	mafreebox  string
-	version    string
-	listen     string
-	trackID    *track
+	mafreebox string
+	version   string
+	listen    string
+	//trackID    *track
 	granted    *grant
 	challenged *challenge
 	rrdTest    *rrd

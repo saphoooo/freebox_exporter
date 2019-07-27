@@ -57,38 +57,39 @@ func retreiveToken(authInf *authInfo) (string, error) {
 
 // getTrackID is the initial request to freebox API
 // get app_token and track_id
-func getTrackID(authInf *authInfo) error {
+func getTrackID(authInf *authInfo) (*track, error) {
 
 	req, _ := json.Marshal(authInf.myApp)
 	buf := bytes.NewReader(req)
 	//resp, err := http.Post(mafreebox+"api/"+version+"/login/authorize/", "application/json", buf)
 	resp, err := http.Post(authInf.myAPI.authz, "application/json", buf)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	trackID := track{}
 	err = json.Unmarshal(body, &trackID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = storeToken(trackID.Result.AppToken, authInf)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &trackID, nil
 }
 
 // getGranted waits for user to validate on the freebox front panel
 // with a timeout of 15 seconds
 func getGranted(authInf *authInfo) error {
-	err := getTrackID(authInf)
+	trackID, err := getTrackID(authInf)
 	if err != nil {
 		return err
 	}

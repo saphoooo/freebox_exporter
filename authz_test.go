@@ -99,12 +99,16 @@ func TestGetTrackID(t *testing.T) {
 	defer ts.Close()
 
 	ai.myAPI.authz = ts.URL
-	err := getTrackID(ai)
+	trackID, err := getTrackID(ai)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 	defer os.Remove(ai.myStore.location)
 	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	if trackID.Result.TrackID != 101 {
+		t.Error("Expected 101, but got", trackID.Result.TrackID)
+	}
 
 	// as getTrackID have no return value
 	// the result of storeToken func is checked instead
