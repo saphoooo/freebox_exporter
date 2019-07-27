@@ -202,7 +202,10 @@ func getToken(authInf *authInfo) (string, error) {
 		}
 		reader := bufio.NewReader(os.Stdin)
 		log.Println("check \"Modification des réglages de la Freebox\" and press enter")
-		_, _ = reader.ReadString('\n')
+		_, err = reader.ReadString('\n')
+		if err != nil {
+			return "", err
+		}
 	} else {
 		_, err := retreiveToken(authInf)
 		if err != nil {
@@ -214,31 +217,31 @@ func getToken(authInf *authInfo) (string, error) {
 		return "", err
 	}
 	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
-	token, err := getSession(authInf, password)
+	t, err := getSession(authInf, password)
 	if err != nil {
 		return "", err
 	}
-	if token.Success {
+	if t.Success {
 		fmt.Println("successfully authenticated")
 	} else {
-		return "", errors.New(token.Msg)
+		return "", errors.New(t.Msg)
 	}
-	return token.Result.SessionToken, nil
+	return t.Result.SessionToken, nil
 }
 
 // getSessToken gets a new token session when the old one has expired
-func getSessToken(t string, authInf *authInfo) (string, error) {
+func getSessToken(token string, authInf *authInfo) (string, error) {
 	challenged, err := getChallenge(authInf)
 	if err != nil {
 		return "", err
 	}
-	password := hmacSha1(t, challenged.Result.Challenge)
-	token, err := getSession(authInf, password)
+	password := hmacSha1(token, challenged.Result.Challenge)
+	t, err := getSession(authInf, password)
 	if err != nil {
 		return "", err
 	}
-	if token.Success == false {
-		return "", errors.New(token.Msg)
+	if t.Success == false {
+		return "", errors.New(t.Msg)
 	}
-	return token.Result.SessionToken, nil
+	return t.Result.SessionToken, nil
 }
