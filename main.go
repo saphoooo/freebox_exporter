@@ -65,6 +65,12 @@ func main() {
 		header: "X-Fbx-App-Auth",
 	}
 
+	mySystemRequest := &postRequest{
+		method: "GET",
+		url:    mafreebox + "api/" + version + "/system/",
+		header: "X-Fbx-App-Auth",
+	}
+
 	// RRD dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",
@@ -265,7 +271,10 @@ func main() {
 			}
 
 			// fan metrics
-			systemStats := getSystem(myAuthInfo)
+			systemStats, err := getSystem(myAuthInfo, mySystemRequest)
+			if err != nil {
+				log.Fatal(err)
+			}
 			sensors := systemStats.Sensors
 			fans := systemStats.Fans
 			for _, v := range sensors {

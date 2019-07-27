@@ -383,3 +383,56 @@ func getLan(authInf *authInfo, pr *postRequest) ([]lanHost, error) {
 	}
 	return lanResp.Result, nil
 }
+
+// getLan get lan statistics
+func getSystem(authInf *authInfo, pr *postRequest) (systemR, error) {
+	freeboxToken, err := setFreeboxToken(authInf)
+	if err != nil {
+		return systemR{}, err
+	}
+
+	client := http.Client{}
+	req, err := http.NewRequest(pr.method, pr.url, nil)
+	if err != nil {
+		return systemR{}, err
+	}
+	req.Header.Add(pr.header, sessToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return systemR{}, err
+	}
+	if resp.StatusCode == 404 {
+		return systemR{}, errors.New(resp.Status)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return systemR{}, err
+	}
+	err = json.Unmarshal(body, &systemResp)
+	switch systemResp.ErrorCode {
+	case "auth_required":
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			return systemR{}, err
+		}
+	case "invalid_token":
+		return systemR{}, apiErrors["invalid_token"]
+	case "pending_token":
+		log.Println("The app token you are trying to use has not been validated by user yet")
+	case "insufficient_rights":
+		return systemR{}, apiErrors["insufficient_rights"]
+	case "denied_from_external_ip":
+		return systemR{}, apiErrors["denied_from_external_ip"]
+	case "invalid_request":
+		return systemR{}, apiErrors["invalid_request"]
+	case "ratelimited":
+		return systemR{}, apiErrors["ratelimited"]
+	case "new_apps_denied":
+		return systemR{}, apiErrors["new_apps_denied"]
+	case "apps_denied":
+		return systemR{}, apiErrors["apps_denied"]
+	case "internal_error":
+		return systemR{}, apiErrors["internal_error"]
+	}
+	return systemResp.Result, nil
+}
