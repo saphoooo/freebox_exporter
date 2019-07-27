@@ -107,6 +107,7 @@ func getGranted(authInf *authInfo) error {
 			return err
 		}
 
+		granted := grant{}
 		err = json.Unmarshal(body, &granted)
 		if err != nil {
 			return err
