@@ -81,6 +81,14 @@ func main() {
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
+	// database used to get net stats
+	xswitch := database{
+		DB:        "switch",
+		Fields:    []string{"rx_1", "tx_1", "rx_2", "tx_2", "rx_3", "tx_3", "rx_4", "tx_4"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
+	}
+
 	myPostRequest := newPostRequest()
 
 	// RRD dsl gauge
@@ -233,7 +241,10 @@ func main() {
 			snrDownGauge.Set(float64(snrDown))
 
 			// switch metrcis
-			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4 := getSwitch(myAuthInfo)
+			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := xswitch.getSwitch(myAuthInfo, myPostRequest)
+			if err != nil {
+				log.Fatal(err)
+			}
 			rx1Gauge.Set(float64(rx1))
 			tx1Gauge.Set(float64(tx1))
 			rx2Gauge.Set(float64(rx2))
