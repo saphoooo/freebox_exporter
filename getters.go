@@ -328,3 +328,58 @@ func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int
 	}
 	return rrdTest.Result.Data[0]["rx_1"], rrdTest.Result.Data[0]["tx_1"], rrdTest.Result.Data[0]["rx_2"], rrdTest.Result.Data[0]["tx_2"], rrdTest.Result.Data[0]["rx_3"], rrdTest.Result.Data[0]["tx_3"], rrdTest.Result.Data[0]["rx_4"], rrdTest.Result.Data[0]["tx_4"], nil
 }
+
+// getLan get lan statistics
+func getLan(authInf *authInfo) ([]lanHost, error) {
+
+	freeboxToken, err := setFreeboxToken(authInf)
+	if err != nil {
+		return []lanHost{}, err
+	}
+
+	client := http.Client{}
+	req, err := http.NewRequest("GET", fmt.Sprintf("%sapi/%s/lan/browser/pub/", mafreebox, version), nil)
+	if err != nil {
+		return []lanHost{}, err
+	}
+	req.Header.Add("X-Fbx-App-Auth", sessToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return []lanHost{}, err
+	}
+	if resp.StatusCode == 404 {
+		return []lanHost{}, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []lanHost{}, err
+	}
+	err = json.Unmarshal(body, &lanResp)
+	switch lanResp.ErrorCode {
+	case "auth_required":
+		sessToken, err = getSessToken(freeboxToken, authInf)
+		if err != nil {
+			return []lanHost{}, err
+		}
+	case "invalid_token":
+		return []lanHost{}, apiErrors["invalid_token"]
+	case "pending_token":
+		log.Println("The app token you are trying to use has not been validated by user yet")
+	case "insufficient_rights":
+		return []lanHost{}, apiErrors["insufficient_rights"]
+	case "denied_from_external_ip":
+		return []lanHost{}, apiErrors["denied_from_external_ip"]
+	case "invalid_request":
+		return []lanHost{}, apiErrors["invalid_request"]
+	case "ratelimited":
+		return []lanHost{}, apiErrors["ratelimited"]
+	case "new_apps_denied":
+		return []lanHost{}, apiErrors["new_apps_denied"]
+	case "apps_denied":
+		return []lanHost{}, apiErrors["apps_denied"]
+	case "internal_error":
+		return []lanHost{}, apiErrors["internal_error"]
+	}
+	return lanResp.Result, nil
+}

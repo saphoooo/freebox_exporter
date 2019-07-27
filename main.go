@@ -246,7 +246,10 @@ func main() {
 			vpnRateDownGauge.Set(float64(vpnRateDown))
 
 			// lan metrics
-			lanAvailable := getLan(myAuthInfo)
+			lanAvailable, err := getLan(myAuthInfo)
+			if err != nil {
+				log.Fatal(err)
+			}
 			for _, v := range lanAvailable {
 				if v.Reachable {
 					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(1))
