@@ -26,21 +26,21 @@ var (
 )
 
 // setFreeboxToken ensure that there is an active token for a call
-func setFreeboxToken(authInf *authInfo) (string, error) {
+func setFreeboxToken(authInf *authInfo, xSessionToken *string) (string, error) {
 
 	token := os.Getenv("FREEBOX_TOKEN")
 
 	if token == "" {
 		var err error
-		sessToken, err = getToken(authInf)
+		*xSessionToken, err = getToken(authInf, xSessionToken)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	if sessToken == "" {
+	if *xSessionToken == "" {
 		var err error
-		sessToken, err = getSessToken(token, authInf)
+		*xSessionToken, err = getSessToken(token, authInf, xSessionToken)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -59,7 +59,7 @@ func newPostRequest() *postRequest {
 }
 
 // getDsl get dsl statistics
-func getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
+func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) (int, int, int, int, error) {
 	d := &database{
 		DB:        "dsl",
 		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
@@ -67,7 +67,7 @@ func getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
-	freeboxToken, err := setFreeboxToken(authInf)
+	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
@@ -81,7 +81,7 @@ func getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
-	req.Header.Add(pr.header, sessToken)
+	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		return 0, 0, 0, 0, err
@@ -97,7 +97,7 @@ func getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken, err = getSessToken(freeboxToken, authInf)
+		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -127,7 +127,7 @@ func getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
 }
 
 // getTemp get temp statistics
-func getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error) {
+func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) (int, int, int, int, int, error) {
 	d := &database{
 		DB:        "temp",
 		Fields:    []string{"cpum", "cpub", "sw", "hdd", "fan_speed"},
@@ -135,7 +135,7 @@ func getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
-	freeboxToken, err := setFreeboxToken(authInf)
+	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
 		return 0, 0, 0, 0, 0, err
 	}
@@ -150,7 +150,7 @@ func getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error
 	if err != nil {
 		return 0, 0, 0, 0, 0, err
 	}
-	req.Header.Add(pr.header, sessToken)
+	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		return 0, 0, 0, 0, 0, err
@@ -166,7 +166,7 @@ func getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken, err = getSessToken(freeboxToken, authInf)
+		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
 			return 0, 0, 0, 0, 0, err
 		}
@@ -196,7 +196,7 @@ func getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error
 }
 
 // getNet get net statistics
-func getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, error) {
+func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) (int, int, int, int, int, int, error) {
 	d := &database{
 		DB:        "net",
 		Fields:    []string{"bw_up", "bw_down", "rate_up", "rate_down", "vpn_rate_up", "vpn_rate_down"},
@@ -204,7 +204,7 @@ func getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, e
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
-	freeboxToken, err := setFreeboxToken(authInf)
+	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
@@ -219,7 +219,7 @@ func getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, e
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
-	req.Header.Add(pr.header, sessToken)
+	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, err
@@ -235,7 +235,7 @@ func getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, e
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken, err = getSessToken(freeboxToken, authInf)
+		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
 			return 0, 0, 0, 0, 0, 0, err
 		}
@@ -265,7 +265,7 @@ func getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, e
 }
 
 // getSwitch get switch statistics
-func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, int, int, error) {
+func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) (int, int, int, int, int, int, int, int, error) {
 	d := &database{
 		DB:        "switch",
 		Fields:    []string{"rx_1", "tx_1", "rx_2", "tx_2", "rx_3", "tx_3", "rx_4", "tx_4"},
@@ -273,7 +273,7 @@ func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
-	freeboxToken, err := setFreeboxToken(authInf)
+	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, 0, 0, err
 	}
@@ -288,7 +288,7 @@ func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, 0, 0, err
 	}
-	req.Header.Add(pr.header, sessToken)
+	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, 0, 0, err
@@ -304,7 +304,7 @@ func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
-		sessToken, err = getSessToken(freeboxToken, authInf)
+		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
 			return 0, 0, 0, 0, 0, 0, 0, 0, err
 		}
@@ -334,9 +334,9 @@ func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int
 }
 
 // getLan get lan statistics
-func getLan(authInf *authInfo, pr *postRequest) ([]lanHost, error) {
+func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHost, error) {
 
-	freeboxToken, err := setFreeboxToken(authInf)
+	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
 		return []lanHost{}, err
 	}
@@ -346,7 +346,7 @@ func getLan(authInf *authInfo, pr *postRequest) ([]lanHost, error) {
 	if err != nil {
 		return []lanHost{}, err
 	}
-	req.Header.Add(pr.header, sessToken)
+	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		return []lanHost{}, err
@@ -364,7 +364,7 @@ func getLan(authInf *authInfo, pr *postRequest) ([]lanHost, error) {
 	err = json.Unmarshal(body, &lanResp)
 	switch lanResp.ErrorCode {
 	case "auth_required":
-		sessToken, err = getSessToken(freeboxToken, authInf)
+		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
 			return []lanHost{}, err
 		}
@@ -391,8 +391,8 @@ func getLan(authInf *authInfo, pr *postRequest) ([]lanHost, error) {
 }
 
 // getLan get lan statistics
-func getSystem(authInf *authInfo, pr *postRequest) (systemR, error) {
-	freeboxToken, err := setFreeboxToken(authInf)
+func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (systemR, error) {
+	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
 		return systemR{}, err
 	}
@@ -402,7 +402,7 @@ func getSystem(authInf *authInfo, pr *postRequest) (systemR, error) {
 	if err != nil {
 		return systemR{}, err
 	}
-	req.Header.Add(pr.header, sessToken)
+	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		return systemR{}, err
@@ -418,7 +418,7 @@ func getSystem(authInf *authInfo, pr *postRequest) (systemR, error) {
 	err = json.Unmarshal(body, &systemResp)
 	switch systemResp.ErrorCode {
 	case "auth_required":
-		sessToken, err = getSessToken(freeboxToken, authInf)
+		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
 			return systemR{}, err
 		}

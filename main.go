@@ -15,7 +15,6 @@ var (
 	mafreebox string
 	version   string
 	listen    string
-	sessToken string
 )
 
 func init() {
@@ -62,11 +61,13 @@ func main() {
 		header: "X-Fbx-App-Auth",
 	}
 
+	var mySessionToken string
+
 	// infinite loop to get all statistics
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown, err := getDsl(myAuthInfo, myPostRequest)
+			rateUp, rateDown, snrUp, snrDown, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -76,7 +77,7 @@ func main() {
 			snrDownGauge.Set(float64(snrDown))
 
 			// switch metrcis
-			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(myAuthInfo, myPostRequest)
+			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -90,7 +91,7 @@ func main() {
 			tx4Gauge.Set(float64(tx4))
 
 			// temps metrcis
-			cpum, cpub, sw, hdd, fanSpeed, err := getTemp(myAuthInfo, myPostRequest)
+			cpum, cpub, sw, hdd, fanSpeed, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -101,7 +102,7 @@ func main() {
 			fanSpeedGauge.Set(float64(fanSpeed))
 
 			// net metrics
-			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown, err := getNet(myAuthInfo, myPostRequest)
+			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown, err := getNet(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -113,7 +114,7 @@ func main() {
 			vpnRateDownGauge.Set(float64(vpnRateDown))
 
 			// lan metrics
-			lanAvailable, err := getLan(myAuthInfo, myLanRequest)
+			lanAvailable, err := getLan(myAuthInfo, myLanRequest, &mySessionToken)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -126,7 +127,7 @@ func main() {
 			}
 
 			// fan metrics
-			systemStats, err := getSystem(myAuthInfo, mySystemRequest)
+			systemStats, err := getSystem(myAuthInfo, mySystemRequest, &mySessionToken)
 			if err != nil {
 				log.Fatal(err)
 			}

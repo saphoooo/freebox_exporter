@@ -194,7 +194,7 @@ func getSession(authInf *authInfo, passwd string) (*sessionToken, error) {
 
 // getToken gets a valid session_token and asks for user to change
 // the set of permissions on the API
-func getToken(authInf *authInfo) (string, error) {
+func getToken(authInf *authInfo, xSessionToken *string) (string, error) {
 	if _, err := os.Stat(authInf.myStore.location); os.IsNotExist(err) {
 		err = getGranted(authInf)
 		if err != nil {
@@ -226,11 +226,12 @@ func getToken(authInf *authInfo) (string, error) {
 	} else {
 		return "", errors.New(t.Msg)
 	}
+	*xSessionToken = t.Result.SessionToken
 	return t.Result.SessionToken, nil
 }
 
 // getSessToken gets a new token session when the old one has expired
-func getSessToken(token string, authInf *authInfo) (string, error) {
+func getSessToken(token string, authInf *authInfo, xSessionToken *string) (string, error) {
 	challenged, err := getChallenge(authInf)
 	if err != nil {
 		return "", err
@@ -243,5 +244,6 @@ func getSessToken(token string, authInf *authInfo) (string, error) {
 	if t.Success == false {
 		return "", errors.New(t.Msg)
 	}
+	*xSessionToken = t.Result.SessionToken
 	return t.Result.SessionToken, nil
 }
