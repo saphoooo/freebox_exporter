@@ -20,10 +20,7 @@ var (
 	trackID    *track
 	granted    *grant
 	challenged *challenge
-	token      *sessionToken
 	rrdTest    *rrd
-	lanResp    *lan
-	systemResp *system
 	sessToken  string
 )
 

@@ -355,6 +355,8 @@ func getLan(authInf *authInfo, pr *postRequest) ([]lanHost, error) {
 	if err != nil {
 		return []lanHost{}, err
 	}
+
+	lanResp := lan{}
 	err = json.Unmarshal(body, &lanResp)
 	switch lanResp.ErrorCode {
 	case "auth_required":
@@ -408,6 +410,7 @@ func getSystem(authInf *authInfo, pr *postRequest) (systemR, error) {
 	if err != nil {
 		return systemR{}, err
 	}
+	systemResp := system{}
 	err = json.Unmarshal(body, &systemResp)
 	switch systemResp.ErrorCode {
 	case "auth_required":

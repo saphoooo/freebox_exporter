@@ -161,31 +161,32 @@ func hmacSha1(appToken, challenge string) string {
 }
 
 // getSession gets a session with freeebox API
-func getSession(authInf *authInfo, passwd string) error {
+func getSession(authInf *authInfo, passwd string) (*sessionToken, error) {
 	s := session{
 		AppID:    authInf.myApp.AppID,
 		Password: passwd,
 	}
 	req, err := json.Marshal(s)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	buf := bytes.NewReader(req)
 	//resp, err := http.Post(mafreebox+"api/"+version+"/login/session/", "application/json", buf)
 	resp, err := http.Post(authInf.myAPI.loginSession, "application/json", buf)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	token := sessionToken{}
 	err = json.Unmarshal(body, &token)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &token, nil
 }
 
 // getToken gets a valid session_token and asks for user to change
@@ -210,7 +211,7 @@ func getToken(authInf *authInfo) (string, error) {
 		return "", err
 	}
 	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
-	err = getSession(authInf, password)
+	token, err := getSession(authInf, password)
 	if err != nil {
 		return "", err
 	}
@@ -229,7 +230,7 @@ func getSessToken(t string, authInf *authInfo) (string, error) {
 		return "", err
 	}
 	password := hmacSha1(t, challenged.Result.Challenge)
-	err = getSession(authInf, password)
+	token, err := getSession(authInf, password)
 	if err != nil {
 		return "", err
 	}

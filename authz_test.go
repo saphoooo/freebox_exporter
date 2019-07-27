@@ -202,7 +202,7 @@ func TestGetSession(t *testing.T) {
 		},
 	}
 
-	err := getSession(ai, "")
+	token, err := getSession(ai, "")
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
