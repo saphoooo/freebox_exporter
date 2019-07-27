@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 var (
@@ -58,13 +59,20 @@ func newPostRequest() *postRequest {
 }
 
 // getDsl get dsl statistics
-func (d *database) getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
+func getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
+	d := &database{
+		DB:        "dsl",
+		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
+	}
+
 	freeboxToken, err := setFreeboxToken(authInf)
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
 	client := http.Client{}
-	r, err := json.Marshal(d)
+	r, err := json.Marshal(*d)
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
@@ -118,14 +126,21 @@ func (d *database) getDsl(authInf *authInfo, pr *postRequest) (int, int, int, in
 }
 
 // getTemp get temp statistics
-func (d *database) getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error) {
+func getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error) {
+	d := &database{
+		DB:        "temp",
+		Fields:    []string{"cpum", "cpub", "sw", "hdd", "fan_speed"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
+	}
+
 	freeboxToken, err := setFreeboxToken(authInf)
 	if err != nil {
 		return 0, 0, 0, 0, 0, err
 	}
 
 	client := http.Client{}
-	r, err := json.Marshal(d)
+	r, err := json.Marshal(*d)
 	if err != nil {
 		return 0, 0, 0, 0, 0, err
 	}
@@ -179,14 +194,21 @@ func (d *database) getTemp(authInf *authInfo, pr *postRequest) (int, int, int, i
 }
 
 // getNet get net statistics
-func (d *database) getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, error) {
+func getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, error) {
+	d := &database{
+		DB:        "net",
+		Fields:    []string{"bw_up", "bw_down", "rate_up", "rate_down", "vpn_rate_up", "vpn_rate_down"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
+	}
+
 	freeboxToken, err := setFreeboxToken(authInf)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
 
 	client := http.Client{}
-	r, err := json.Marshal(d)
+	r, err := json.Marshal(*d)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
@@ -240,14 +262,21 @@ func (d *database) getNet(authInf *authInfo, pr *postRequest) (int, int, int, in
 }
 
 // getSwitch get switch statistics
-func (d *database) getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, int, int, error) {
+func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, int, int, error) {
+	d := &database{
+		DB:        "switch",
+		Fields:    []string{"rx_1", "tx_1", "rx_2", "tx_2", "rx_3", "tx_3", "rx_4", "tx_4"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
+	}
+
 	freeboxToken, err := setFreeboxToken(authInf)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, 0, 0, err
 	}
 
 	client := http.Client{}
-	r, err := json.Marshal(d)
+	r, err := json.Marshal(*d)
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, 0, 0, err
 	}

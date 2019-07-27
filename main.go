@@ -57,38 +57,6 @@ func main() {
 		},
 	}
 
-	// database used to get dsl stats
-	xdsl := &database{
-		DB:        "dsl",
-		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
-		Precision: 10,
-		DateStart: int(time.Now().Unix() - 10),
-	}
-
-	// database used to get temp stats
-	xtemp := database{
-		DB:        "temp",
-		Fields:    []string{"cpum", "cpub", "sw", "hdd", "fan_speed"},
-		Precision: 10,
-		DateStart: int(time.Now().Unix() - 10),
-	}
-
-	// database used to get net stats
-	xnet := database{
-		DB:        "net",
-		Fields:    []string{"bw_up", "bw_down", "rate_up", "rate_down", "vpn_rate_up", "vpn_rate_down"},
-		Precision: 10,
-		DateStart: int(time.Now().Unix() - 10),
-	}
-
-	// database used to get net stats
-	xswitch := database{
-		DB:        "switch",
-		Fields:    []string{"rx_1", "tx_1", "rx_2", "tx_2", "rx_3", "tx_3", "rx_4", "tx_4"},
-		Precision: 10,
-		DateStart: int(time.Now().Unix() - 10),
-	}
-
 	myPostRequest := newPostRequest()
 
 	// RRD dsl gauge
@@ -231,7 +199,7 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown, err := xdsl.getDsl(myAuthInfo, myPostRequest)
+			rateUp, rateDown, snrUp, snrDown, err := getDsl(myAuthInfo, myPostRequest)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -241,7 +209,7 @@ func main() {
 			snrDownGauge.Set(float64(snrDown))
 
 			// switch metrcis
-			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := xswitch.getSwitch(myAuthInfo, myPostRequest)
+			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(myAuthInfo, myPostRequest)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -255,7 +223,7 @@ func main() {
 			tx4Gauge.Set(float64(tx4))
 
 			// temps metrcis
-			cpum, cpub, sw, hdd, fanSpeed, err := xtemp.getTemp(myAuthInfo, myPostRequest)
+			cpum, cpub, sw, hdd, fanSpeed, err := getTemp(myAuthInfo, myPostRequest)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -266,7 +234,7 @@ func main() {
 			fanSpeedGauge.Set(float64(fanSpeed))
 
 			// net metrics
-			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown, err := xnet.getNet(myAuthInfo, myPostRequest)
+			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown, err := getNet(myAuthInfo, myPostRequest)
 			if err != nil {
 				log.Fatal(err)
 			}
