@@ -73,6 +73,14 @@ func main() {
 		DateStart: int(time.Now().Unix() - 10),
 	}
 
+	// database used to get net stats
+	xnet := database{
+		DB:        "net",
+		Fields:    []string{"bw_up", "bw_down", "rate_up", "rate_down", "vpn_rate_up", "vpn_rate_down"},
+		Precision: 10,
+		DateStart: int(time.Now().Unix() - 10),
+	}
+
 	myPostRequest := newPostRequest()
 
 	// RRD dsl gauge
@@ -247,7 +255,10 @@ func main() {
 			fanSpeedGauge.Set(float64(fanSpeed))
 
 			// net metrics
-			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown := getNet(myAuthInfo)
+			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown, err := xnet.getNet(myAuthInfo, myPostRequest)
+			if err != nil {
+				log.Fatal(err)
+			}
 			bwUpGauge.Set(float64(bwUp))
 			bwDownGauge.Set(float64(bwDown))
 			netRateUpGauge.Set(float64(netRateUp))
