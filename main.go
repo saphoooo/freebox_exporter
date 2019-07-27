@@ -15,7 +15,6 @@ var (
 	mafreebox string
 	version   string
 	listen    string
-	rrdTest   *rrd
 	sessToken string
 )
 

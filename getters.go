@@ -93,6 +93,7 @@ func getDsl(authInf *authInfo, pr *postRequest) (int, int, int, int, error) {
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
+	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
@@ -161,6 +162,7 @@ func getTemp(authInf *authInfo, pr *postRequest) (int, int, int, int, int, error
 	if err != nil {
 		return 0, 0, 0, 0, 0, err
 	}
+	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
@@ -229,6 +231,7 @@ func getNet(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int, e
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
+	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
@@ -297,6 +300,7 @@ func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int
 	if err != nil {
 		return 0, 0, 0, 0, 0, 0, 0, 0, err
 	}
+	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	switch rrdTest.ErrorCode {
 	case "auth_required":
