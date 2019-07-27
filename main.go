@@ -59,6 +59,12 @@ func main() {
 
 	myPostRequest := newPostRequest()
 
+	myLanRequest := &postRequest{
+		method: "GET",
+		url:    mafreebox + "api/" + version + "/lan/browser/pub/",
+		header: "X-Fbx-App-Auth",
+	}
+
 	// RRD dsl gauge
 	rateUpGauge := promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",
@@ -246,7 +252,7 @@ func main() {
 			vpnRateDownGauge.Set(float64(vpnRateDown))
 
 			// lan metrics
-			lanAvailable, err := getLan(myAuthInfo)
+			lanAvailable, err := getLan(myAuthInfo, myLanRequest)
 			if err != nil {
 				log.Fatal(err)
 			}

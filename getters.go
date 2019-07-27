@@ -330,7 +330,7 @@ func getSwitch(authInf *authInfo, pr *postRequest) (int, int, int, int, int, int
 }
 
 // getLan get lan statistics
-func getLan(authInf *authInfo) ([]lanHost, error) {
+func getLan(authInf *authInfo, pr *postRequest) ([]lanHost, error) {
 
 	freeboxToken, err := setFreeboxToken(authInf)
 	if err != nil {
@@ -338,11 +338,11 @@ func getLan(authInf *authInfo) ([]lanHost, error) {
 	}
 
 	client := http.Client{}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%sapi/%s/lan/browser/pub/", mafreebox, version), nil)
+	req, err := http.NewRequest(pr.method, pr.url, nil)
 	if err != nil {
 		return []lanHost{}, err
 	}
-	req.Header.Add("X-Fbx-App-Auth", sessToken)
+	req.Header.Add(pr.header, sessToken)
 	resp, err := client.Do(req)
 	if err != nil {
 		return []lanHost{}, err
