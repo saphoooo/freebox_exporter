@@ -245,3 +245,87 @@ func TestGetTemp(t *testing.T) {
 		t.Errorf("Expected 01 02 03 04 05, but got %v %v %v %v %v\n", cpum, cpub, sw, hdd, fanSpeed)
 	}
 }
+
+func TestGetNet(t *testing.T) {
+	os.Setenv("FREEBOX_TOKEN", "IOI")
+	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.RequestURI {
+		case "/good":
+			myRRD := rrd{
+				Success: true,
+			}
+			myRRD.Result.Data = []map[string]int{
+				map[string]int{
+					"bw_up":         01,
+					"bw_down":       02,
+					"rate_up":       03,
+					"rate_down":     04,
+					"vpn_rate_up":   05,
+					"vpn_rate_down": 06,
+				},
+			}
+			result, _ := json.Marshal(myRRD)
+			fmt.Fprintln(w, string(result))
+		case "/error":
+			myRRD := rrd{
+				Success:   true,
+				ErrorCode: "new_apps_denied",
+			}
+			result, _ := json.Marshal(myRRD)
+			fmt.Fprintln(w, string(result))
+		case "/null":
+			myRRD := rrd{
+				Success: true,
+			}
+			result, _ := json.Marshal(myRRD)
+			fmt.Fprintln(w, string(result))
+		}
+	}))
+	defer ts.Close()
+
+	goodPR := &postRequest{
+		method: "POST",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/good",
+	}
+
+	errorPR := &postRequest{
+		method: "POST",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/error",
+	}
+
+	nullPR := &postRequest{
+		method: "POST",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/null",
+	}
+
+	ai := &authInfo{}
+	mySessionToken := "foobar"
+
+	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err := getNet(ai, goodPR, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but go", err)
+	}
+
+	if bwUP != 01 || bwDown != 02 || rUP != 03 || rDown != 04 || vpnUP != 05 || vpnDown != 06 {
+		t.Errorf("Expected 01 02 03 04 05 06, but got %v %v %v %v %v %v\n", bwUP, bwDown, rUP, rDown, vpnUP, vpnDown)
+	}
+
+	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err = getNet(ai, errorPR, &mySessionToken)
+	if err.Error() != "New application token request has been disabled" {
+		t.Error("Expected New application token request has been disabled, but go", err)
+	}
+
+	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err = getNet(ai, nullPR, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but go", err)
+	}
+
+	if bwUP != 0 || bwDown != 0 || rUP != 0 || rDown != 0 || vpnUP != 0 || vpnDown != 0 {
+		t.Errorf("Expected 01 02 03 04 05 06, but got %v %v %v %v %v %v\n", bwUP, bwDown, rUP, rDown, vpnUP, vpnDown)
+	}
+}
