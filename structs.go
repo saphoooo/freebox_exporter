@@ -1,5 +1,7 @@
 package main
 
+import "bufio"
+
 type track struct {
 	Success bool `json:"success"`
 	Result  struct {
@@ -117,9 +119,10 @@ type store struct {
 }
 
 type authInfo struct {
-	myApp   app
-	myAPI   api
-	myStore store
+	myApp    app
+	myAPI    api
+	myStore  store
+	myReader *bufio.Reader
 }
 
 type postRequest struct {

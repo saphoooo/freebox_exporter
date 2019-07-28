@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"log"
 	"net/http"
@@ -45,6 +46,7 @@ func main() {
 			AppVersion: "0.4",
 			DeviceName: "local",
 		},
+		myReader: bufio.NewReader(os.Stdin),
 	}
 
 	myPostRequest := newPostRequest()
