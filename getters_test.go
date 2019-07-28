@@ -342,14 +342,14 @@ func TestGetSwitch(t *testing.T) {
 			}
 			myRRD.Result.Data = []map[string]int{
 				map[string]int{
-					"rx1": 01,
-					"tx1": 11,
-					"rx2": 02,
-					"tx2": 12,
-					"rx3": 03,
-					"tx3": 13,
-					"rx4": 04,
-					"tx4": 14,
+					"rx_1": 01,
+					"tx_1": 11,
+					"rx_2": 02,
+					"tx_2": 12,
+					"rx_3": 03,
+					"tx_3": 13,
+					"rx_4": 04,
+					"tx_4": 14,
 				},
 			}
 			result, _ := json.Marshal(myRRD)
@@ -412,6 +412,68 @@ func TestGetSwitch(t *testing.T) {
 	}
 
 	if rx1 != 0 || tx1 != 0 || rx2 != 0 || tx2 != 0 || rx3 != 0 || tx3 != 0 || rx4 != 0 || tx4 != 0 {
-		t.Errorf("Expected 01 11 02 12 03 13 04 14, but got %v %v %v %v %v %v %v %v\n", rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4)
+		t.Errorf("Expected 0 0 0 0 0 0 0 0, but got %v %v %v %v %v %v %v %v\n", rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4)
 	}
+
+}
+
+func TestGetLan(t *testing.T) {
+	os.Setenv("FREEBOX_TOKEN", "IOI")
+	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.RequestURI {
+		case "/good":
+			host := []lanHost{
+				lanHost{
+					Reachable:   true,
+					PrimaryName: "Reachable host",
+				},
+				lanHost{
+					Reachable:   false,
+					PrimaryName: "Unreachable host",
+				},
+			}
+			result, _ := json.Marshal(host)
+			fmt.Fprintln(w, string(result))
+		case "/error":
+			host := []lanHost{}
+			result, _ := json.Marshal(host)
+			fmt.Fprintln(w, string(result))
+		}
+	}))
+	defer ts.Close()
+
+	goodPR := &postRequest{
+		method: "GET",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/good",
+	}
+
+	errorPR := &postRequest{
+		method: "GET",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/error",
+	}
+
+	_ = errorPR
+
+	ai := &authInfo{}
+	mySessionToken := "foobar"
+
+	lanAvailable, err := getLan(ai, goodPR, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but go", err)
+	}
+
+	for _, v := range lanAvailable {
+		if v.Reachable && v.PrimaryName != "Reachable host" {
+			t.Errorf("Expected Reachable: true, Host: Reachable host, but go Reachable: %v, Host: %v", v.Reachable, v.PrimaryName)
+		}
+
+		if !v.Reachable && v.PrimaryName != "Unreachable host" {
+			t.Errorf("Expected Reachable: false, Host: Unreachable host, but go Reachable: %v, Host: %v", !v.Reachable, v.PrimaryName)
+		}
+	}
+
 }
