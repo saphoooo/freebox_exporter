@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -197,8 +196,7 @@ func getToken(authInf *authInfo, xSessionToken *string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		//reader := bufio.NewReader(os.Stdin)
-		//reader := bufio.NewReader(strings.NewReader("\n"))
+
 		reader := authInf.myReader
 		log.Println("check \"Modification des réglages de la Freebox\" and press enter")
 		_, err = reader.ReadString('\n')
@@ -211,31 +209,13 @@ func getToken(authInf *authInfo, xSessionToken *string) (string, error) {
 			return "", err
 		}
 	}
-	/*
-		token, err := getSessToken(os.Getenv("FREEBOX_TOKEN"), authInf, xSessionToken)
-		if err != nil {
-			return "", err
-		}
-		*xSessionToken = token
-		return token, nil
-	*/
-	challenged, err := getChallenge(authInf)
-	if err != nil {
-		return "", err
-	}
-	password := hmacSha1(os.Getenv("FREEBOX_TOKEN"), challenged.Result.Challenge)
-	t, err := getSession(authInf, password)
-	if err != nil {
-		return "", err
-	}
-	if t.Success {
-		fmt.Println("successfully authenticated")
-	} else {
-		return "", errors.New(t.Msg)
-	}
-	*xSessionToken = t.Result.SessionToken
-	return t.Result.SessionToken, nil
 
+	token, err := getSessToken(os.Getenv("FREEBOX_TOKEN"), authInf, xSessionToken)
+	if err != nil {
+		return "", err
+	}
+	*xSessionToken = token
+	return token, nil
 }
 
 // getSessToken gets a new token session when the old one has expired
