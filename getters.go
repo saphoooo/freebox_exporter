@@ -36,6 +36,7 @@ func setFreeboxToken(authInf *authInfo, xSessionToken *string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		token = *xSessionToken
 	}
 
 	if *xSessionToken == "" {
@@ -44,6 +45,7 @@ func setFreeboxToken(authInf *authInfo, xSessionToken *string) (string, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		token = *xSessionToken
 	}
 
 	return token, nil
