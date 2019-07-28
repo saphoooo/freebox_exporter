@@ -329,3 +329,89 @@ func TestGetNet(t *testing.T) {
 		t.Errorf("Expected 01 02 03 04 05 06, but got %v %v %v %v %v %v\n", bwUP, bwDown, rUP, rDown, vpnUP, vpnDown)
 	}
 }
+
+func TestGetSwitch(t *testing.T) {
+	os.Setenv("FREEBOX_TOKEN", "IOI")
+	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.RequestURI {
+		case "/good":
+			myRRD := rrd{
+				Success: true,
+			}
+			myRRD.Result.Data = []map[string]int{
+				map[string]int{
+					"rx1": 01,
+					"tx1": 11,
+					"rx2": 02,
+					"tx2": 12,
+					"rx3": 03,
+					"tx3": 13,
+					"rx4": 04,
+					"tx4": 14,
+				},
+			}
+			result, _ := json.Marshal(myRRD)
+			fmt.Fprintln(w, string(result))
+		case "/error":
+			myRRD := rrd{
+				Success:   true,
+				ErrorCode: "apps_denied",
+			}
+			result, _ := json.Marshal(myRRD)
+			fmt.Fprintln(w, string(result))
+		case "/null":
+			myRRD := rrd{
+				Success: true,
+			}
+			result, _ := json.Marshal(myRRD)
+			fmt.Fprintln(w, string(result))
+		}
+	}))
+	defer ts.Close()
+
+	goodPR := &postRequest{
+		method: "POST",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/good",
+	}
+
+	errorPR := &postRequest{
+		method: "POST",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/error",
+	}
+
+	nullPR := &postRequest{
+		method: "POST",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/null",
+	}
+
+	ai := &authInfo{}
+	mySessionToken := "foobar"
+
+	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(ai, goodPR, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but go", err)
+	}
+
+	if rx1 != 01 || tx1 != 11 || rx2 != 02 || tx2 != 12 || rx3 != 03 || tx3 != 13 || rx4 != 04 || tx4 != 14 {
+		t.Errorf("Expected 01 11 02 12 03 13 04 14, but got %v %v %v %v %v %v %v %v\n", rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4)
+	}
+
+	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err = getSwitch(ai, errorPR, &mySessionToken)
+	if err.Error() != "API access from apps has been disabled" {
+		t.Error("Expected API access from apps has been disabled, but go", err)
+	}
+
+	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err = getSwitch(ai, nullPR, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but go", err)
+	}
+
+	if rx1 != 0 || tx1 != 0 || rx2 != 0 || tx2 != 0 || rx3 != 0 || tx3 != 0 || rx4 != 0 || tx4 != 0 {
+		t.Errorf("Expected 01 11 02 12 03 13 04 14, but got %v %v %v %v %v %v %v %v\n", rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4)
+	}
+}
