@@ -141,7 +141,7 @@ func TestGetDsl(t *testing.T) {
 
 	r1, r2, s1, s2, err := getDsl(ai, goodPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	if r1 != 12 || r2 != 34 || s1 != 56 || s2 != 78 {
@@ -155,7 +155,7 @@ func TestGetDsl(t *testing.T) {
 
 	r1, r2, s1, s2, err = getDsl(ai, nullPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	if r1 != 0 || r2 != 0 || s1 != 0 || s2 != 0 {
@@ -224,7 +224,7 @@ func TestGetTemp(t *testing.T) {
 
 	cpum, cpub, sw, hdd, fanSpeed, err := getTemp(ai, goodPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	if cpum != 01 || cpub != 02 || sw != 03 || hdd != 04 || fanSpeed != 05 {
@@ -238,7 +238,7 @@ func TestGetTemp(t *testing.T) {
 
 	cpum, cpub, sw, hdd, fanSpeed, err = getTemp(ai, nullPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	if cpum != 0 || cpub != 0 || sw != 0 || hdd != 0 || fanSpeed != 0 {
@@ -317,12 +317,12 @@ func TestGetNet(t *testing.T) {
 
 	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err = getNet(ai, errorPR, &mySessionToken)
 	if err.Error() != "New application token request has been disabled" {
-		t.Error("Expected New application token request has been disabled, but go", err)
+		t.Error("Expected New application token request has been disabled, but got", err)
 	}
 
 	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err = getNet(ai, nullPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	if bwUP != 0 || bwDown != 0 || rUP != 0 || rDown != 0 || vpnUP != 0 || vpnDown != 0 {
@@ -394,7 +394,7 @@ func TestGetSwitch(t *testing.T) {
 
 	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(ai, goodPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	if rx1 != 01 || tx1 != 11 || rx2 != 02 || tx2 != 12 || rx3 != 03 || tx3 != 13 || rx4 != 04 || tx4 != 14 {
@@ -403,12 +403,12 @@ func TestGetSwitch(t *testing.T) {
 
 	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err = getSwitch(ai, errorPR, &mySessionToken)
 	if err.Error() != "API access from apps has been disabled" {
-		t.Error("Expected API access from apps has been disabled, but go", err)
+		t.Error("Expected API access from apps has been disabled, but got", err)
 	}
 
 	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err = getSwitch(ai, nullPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	if rx1 != 0 || tx1 != 0 || rx2 != 0 || tx2 != 0 || rx3 != 0 || tx3 != 0 || rx4 != 0 || tx4 != 0 {
@@ -424,7 +424,10 @@ func TestGetLan(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.RequestURI {
 		case "/good":
-			host := []lanHost{
+			myLan := lan{
+				Success: true,
+			}
+			myLan.Result = []lanHost{
 				lanHost{
 					Reachable:   true,
 					PrimaryName: "Reachable host",
@@ -434,11 +437,14 @@ func TestGetLan(t *testing.T) {
 					PrimaryName: "Unreachable host",
 				},
 			}
-			result, _ := json.Marshal(host)
+			result, _ := json.Marshal(myLan)
 			fmt.Fprintln(w, string(result))
 		case "/error":
-			host := []lanHost{}
-			result, _ := json.Marshal(host)
+			myLan := lan{
+				Success:   true,
+				ErrorCode: "ratelimited",
+			}
+			result, _ := json.Marshal(myLan)
 			fmt.Fprintln(w, string(result))
 		}
 	}))
@@ -456,14 +462,12 @@ func TestGetLan(t *testing.T) {
 		url:    ts.URL + "/error",
 	}
 
-	_ = errorPR
-
 	ai := &authInfo{}
 	mySessionToken := "foobar"
 
 	lanAvailable, err := getLan(ai, goodPR, &mySessionToken)
 	if err != nil {
-		t.Error("Expected no err, but go", err)
+		t.Error("Expected no err, but got", err)
 	}
 
 	for _, v := range lanAvailable {
@@ -476,4 +480,86 @@ func TestGetLan(t *testing.T) {
 		}
 	}
 
+	lanAvailable, err = getLan(ai, errorPR, &mySessionToken)
+	if err.Error() != "Too many auth error have been made from your IP" {
+		t.Error("Expected Too many auth error have been made from your IP, but got", err)
+	}
+
+}
+
+func TestGetSystem(t *testing.T) {
+	os.Setenv("FREEBOX_TOKEN", "IOI")
+	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.RequestURI {
+		case "/good":
+			mySys := system{
+				Success: true,
+			}
+			mySys.Result = systemR{
+				Sensors: []idNameValue{
+					idNameValue{
+						ID:    "sensor01",
+						Name:  "Sensor",
+						Value: 01,
+					},
+				},
+				Fans: []idNameValue{
+					idNameValue{
+						ID:    "fan01",
+						Name:  "Fan",
+						Value: 02,
+					},
+				},
+			}
+			result, _ := json.Marshal(mySys)
+			fmt.Fprintln(w, string(result))
+		case "/error":
+			mySys := system{
+				Success:   true,
+				ErrorCode: "invalid_token",
+			}
+			result, _ := json.Marshal(mySys)
+			fmt.Fprintln(w, string(result))
+		}
+	}))
+	defer ts.Close()
+
+	goodPR := &postRequest{
+		method: "GET",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/good",
+	}
+
+	errorPR := &postRequest{
+		method: "GET",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL + "/error",
+	}
+
+	ai := &authInfo{}
+	mySessionToken := "foobar"
+
+	systemStats, err := getSystem(ai, goodPR, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+	sensors := systemStats.Sensors
+	fans := systemStats.Fans
+	for _, v := range sensors {
+		if v.ID != "sensor01" || v.Name != "Sensor" || v.Value != 01 {
+			t.Errorf("Expected sensor01 Sensor 01, but got %s %s %d", v.ID, v.Name, v.Value)
+		}
+	}
+	for _, v := range fans {
+		if v.ID != "fan01" || v.Name != "Fan" || v.Value != 02 {
+			t.Errorf("Expected fan01 Fan 02, but got %s %s %d", v.ID, v.Name, v.Value)
+		}
+	}
+
+	systemStats, err = getSystem(ai, errorPR, &mySessionToken)
+	if err.Error() != "The app token you are trying to use is invalid or has been revoked" {
+		t.Error("Expected The app token you are trying to use is invalid or has been revoked, but got", err)
+	}
 }
