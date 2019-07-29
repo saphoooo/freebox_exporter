@@ -1,11 +1,6 @@
 package main
 
-type app struct {
-	AppID      string `json:"app_id"`
-	AppName    string `json:"app_name"`
-	AppVersion string `json:"app_version"`
-	DeviceName string `json:"device_name"`
-}
+import "bufio"
 
 type track struct {
 	Success bool `json:"success"`
@@ -26,7 +21,7 @@ type grant struct {
 type challenge struct {
 	Success bool `json:"success"`
 	Result  struct {
-		LoggedIN  bool   `json:"logged_in"`
+		LoggedIN  bool   `json:"logged_in,omitempty"`
 		Challenge string `json:"challenge"`
 	} `json:"result"`
 }
@@ -104,4 +99,32 @@ type system struct {
 	Success   bool    `json:"success"`
 	Result    systemR `json:"result"`
 	ErrorCode string  `json:"error_code"`
+}
+
+type app struct {
+	AppID      string `json:"app_id"`
+	AppName    string `json:"app_name"`
+	AppVersion string `json:"app_version"`
+	DeviceName string `json:"device_name"`
+}
+
+type api struct {
+	authz        string
+	login        string
+	loginSession string
+}
+
+type store struct {
+	location string
+}
+
+type authInfo struct {
+	myApp    app
+	myAPI    api
+	myStore  store
+	myReader *bufio.Reader
+}
+
+type postRequest struct {
+	method, url, header string
 }
