@@ -71,7 +71,7 @@ func main() {
 			// dsl metrics
 			rateUp, rateDown, snrUp, snrDown, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
-				log.Fatalln(err)
+				log.Print(err)
 			}
 			rateUpGauge.Set(float64(rateUp))
 			rateDownGauge.Set(float64(rateDown))
@@ -81,7 +81,7 @@ func main() {
 			// switch metrcis
 			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			rx1Gauge.Set(float64(rx1))
 			tx1Gauge.Set(float64(tx1))
@@ -95,7 +95,7 @@ func main() {
 			// temps metrcis
 			cpum, cpub, sw, hdd, fanSpeed, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			cpumGauge.Set(float64(cpum))
 			cpubGauge.Set(float64(cpub))
@@ -106,7 +106,7 @@ func main() {
 			// net metrics
 			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown, err := getNet(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			bwUpGauge.Set(float64(bwUp))
 			bwDownGauge.Set(float64(bwDown))
@@ -118,7 +118,7 @@ func main() {
 			// lan metrics
 			lanAvailable, err := getLan(myAuthInfo, myLanRequest, &mySessionToken)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			for _, v := range lanAvailable {
 				if v.Reachable {
@@ -131,7 +131,7 @@ func main() {
 			// fan metrics
 			systemStats, err := getSystem(myAuthInfo, mySystemRequest, &mySessionToken)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			sensors := systemStats.Sensors
 			fans := systemStats.Fans
