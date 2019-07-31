@@ -190,6 +190,7 @@ func main() {
 	}()
 
 	// expose the registered metrics via HTTP OpenMetrics
+	log.Println("freebox_exporter started on port", listen)
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(listen, nil))
 }
