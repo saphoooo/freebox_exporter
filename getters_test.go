@@ -139,28 +139,33 @@ func TestGetDsl(t *testing.T) {
 	ai := &authInfo{}
 	mySessionToken := "foobar"
 
-	r1, r2, s1, s2, err := getDsl(ai, goodPR, &mySessionToken)
+	getDslResult, err := getDsl(ai, goodPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 
-	if r1 != 12 || r2 != 34 || s1 != 56 || s2 != 78 {
-		t.Errorf("Expected 12 34 56 78, but got %v %v %v %v\n", r1, r2, s1, s2)
+	if getDslResult[0] != 12 || getDslResult[1] != 34 || getDslResult[2] != 56 || getDslResult[3] != 78 {
+		t.Errorf("Expected 12 34 56 78, but got %v %v %v %v\n", getDslResult[0], getDslResult[1], getDslResult[2], getDslResult[3])
 	}
 
-	r1, r2, s1, s2, err = getDsl(ai, errorPR, &mySessionToken)
+	getDslResult, err = getDsl(ai, errorPR, &mySessionToken)
 	if err.Error() != "Your app permissions does not allow accessing this API" {
 		t.Error("Expected Your app permissions does not allow accessing this API, but go", err)
 	}
 
-	r1, r2, s1, s2, err = getDsl(ai, nullPR, &mySessionToken)
+	if len(getDslResult) != 0 {
+		t.Error("Expected 0, but got", len(getDslResult))
+	}
+
+	getDslResult, err = getDsl(ai, nullPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 
-	if r1 != 0 || r2 != 0 || s1 != 0 || s2 != 0 {
-		t.Errorf("Expected 12 34 56 78, but got %v %v %v %v\n", r1, r2, s1, s2)
+	if len(getDslResult) != 0 {
+		t.Error("Expected 0, but got", len(getDslResult))
 	}
+
 }
 
 func TestGetTemp(t *testing.T) {
@@ -222,28 +227,33 @@ func TestGetTemp(t *testing.T) {
 	ai := &authInfo{}
 	mySessionToken := "foobar"
 
-	cpum, cpub, sw, hdd, fanSpeed, err := getTemp(ai, goodPR, &mySessionToken)
+	getTempResult, err := getTemp(ai, goodPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 
-	if cpum != 01 || cpub != 02 || sw != 03 || hdd != 04 || fanSpeed != 05 {
-		t.Errorf("Expected 01 02 03 04 05, but got %v %v %v %v %v\n", cpum, cpub, sw, hdd, fanSpeed)
+	if getTempResult[0] != 01 || getTempResult[1] != 02 || getTempResult[2] != 03 || getTempResult[3] != 04 || getTempResult[4] != 05 {
+		t.Errorf("Expected 01 02 03 04 05, but got %v %v %v %v %v\n", getTempResult[0], getTempResult[1], getTempResult[2], getTempResult[3], getTempResult[4])
 	}
 
-	cpum, cpub, sw, hdd, fanSpeed, err = getTemp(ai, errorPR, &mySessionToken)
+	getTempResult, err = getTemp(ai, errorPR, &mySessionToken)
 	if err.Error() != "You are trying to get an app_token from a remote IP" {
 		t.Error("Expected You are trying to get an app_token from a remote IP, but go", err)
 	}
 
-	cpum, cpub, sw, hdd, fanSpeed, err = getTemp(ai, nullPR, &mySessionToken)
+	if len(getTempResult) != 0 {
+		t.Error("Expected 0, but got", len(getTempResult))
+	}
+
+	getTempResult, err = getTemp(ai, nullPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 
-	if cpum != 0 || cpub != 0 || sw != 0 || hdd != 0 || fanSpeed != 0 {
-		t.Errorf("Expected 01 02 03 04 05, but got %v %v %v %v %v\n", cpum, cpub, sw, hdd, fanSpeed)
+	if len(getTempResult) != 0 {
+		t.Error("Expected 0, but got", len(getTempResult))
 	}
+
 }
 
 func TestGetNet(t *testing.T) {
@@ -306,28 +316,33 @@ func TestGetNet(t *testing.T) {
 	ai := &authInfo{}
 	mySessionToken := "foobar"
 
-	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err := getNet(ai, goodPR, &mySessionToken)
+	getNetResult, err := getNet(ai, goodPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but go", err)
 	}
 
-	if bwUP != 01 || bwDown != 02 || rUP != 03 || rDown != 04 || vpnUP != 05 || vpnDown != 06 {
-		t.Errorf("Expected 01 02 03 04 05 06, but got %v %v %v %v %v %v\n", bwUP, bwDown, rUP, rDown, vpnUP, vpnDown)
+	if getNetResult[0] != 01 || getNetResult[1] != 02 || getNetResult[2] != 03 || getNetResult[3] != 04 || getNetResult[4] != 05 || getNetResult[5] != 06 {
+		t.Errorf("Expected 01 02 03 04 05 06, but got %v %v %v %v %v %v\n", getNetResult[0], getNetResult[1], getNetResult[2], getNetResult[3], getNetResult[4], getNetResult[5])
 	}
 
-	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err = getNet(ai, errorPR, &mySessionToken)
+	getNetResult, err = getNet(ai, errorPR, &mySessionToken)
 	if err.Error() != "New application token request has been disabled" {
 		t.Error("Expected New application token request has been disabled, but got", err)
 	}
 
-	bwUP, bwDown, rUP, rDown, vpnUP, vpnDown, err = getNet(ai, nullPR, &mySessionToken)
+	if len(getNetResult) != 0 {
+		t.Error("Expected 0, but got", len(getNetResult))
+	}
+
+	getNetResult, err = getNet(ai, nullPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 
-	if bwUP != 0 || bwDown != 0 || rUP != 0 || rDown != 0 || vpnUP != 0 || vpnDown != 0 {
-		t.Errorf("Expected 01 02 03 04 05 06, but got %v %v %v %v %v %v\n", bwUP, bwDown, rUP, rDown, vpnUP, vpnDown)
+	if len(getNetResult) != 0 {
+		t.Error("Expected 0, but got", len(getNetResult))
 	}
+
 }
 
 func TestGetSwitch(t *testing.T) {
@@ -392,27 +407,31 @@ func TestGetSwitch(t *testing.T) {
 	ai := &authInfo{}
 	mySessionToken := "foobar"
 
-	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(ai, goodPR, &mySessionToken)
+	getSwitchResult, err := getSwitch(ai, goodPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 
-	if rx1 != 01 || tx1 != 11 || rx2 != 02 || tx2 != 12 || rx3 != 03 || tx3 != 13 || rx4 != 04 || tx4 != 14 {
-		t.Errorf("Expected 01 11 02 12 03 13 04 14, but got %v %v %v %v %v %v %v %v\n", rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4)
+	if getSwitchResult[0] != 01 || getSwitchResult[1] != 11 || getSwitchResult[2] != 02 || getSwitchResult[3] != 12 || getSwitchResult[4] != 03 || getSwitchResult[5] != 13 || getSwitchResult[6] != 04 || getSwitchResult[7] != 14 {
+		t.Errorf("Expected 01 11 02 12 03 13 04 14, but got %v %v %v %v %v %v %v %v\n", getSwitchResult[0], getSwitchResult[1], getSwitchResult[2], getSwitchResult[3], getSwitchResult[4], getSwitchResult[5], getSwitchResult[6], getSwitchResult[7])
 	}
 
-	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err = getSwitch(ai, errorPR, &mySessionToken)
+	getSwitchResult, err = getSwitch(ai, errorPR, &mySessionToken)
 	if err.Error() != "API access from apps has been disabled" {
 		t.Error("Expected API access from apps has been disabled, but got", err)
 	}
 
-	rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err = getSwitch(ai, nullPR, &mySessionToken)
+	if len(getSwitchResult) != 0 {
+		t.Error("Expected 0, but got", len(getSwitchResult))
+	}
+
+	getSwitchResult, err = getSwitch(ai, nullPR, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
 
-	if rx1 != 0 || tx1 != 0 || rx2 != 0 || tx2 != 0 || rx3 != 0 || tx3 != 0 || rx4 != 0 || tx4 != 0 {
-		t.Errorf("Expected 0 0 0 0 0 0 0 0, but got %v %v %v %v %v %v %v %v\n", rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4)
+	if len(getSwitchResult) != 0 {
+		t.Error("Expected 0, but got", len(getSwitchResult))
 	}
 
 }

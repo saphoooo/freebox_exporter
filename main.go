@@ -14,13 +14,11 @@ import (
 
 var (
 	mafreebox string
-	version   string
 	listen    string
 )
 
 func init() {
 	flag.StringVar(&mafreebox, "endpoint", "http://mafreebox.freebox.fr/", "Endpoint for freebox API")
-	flag.StringVar(&version, "version", "v6", "freebox API version")
 	flag.StringVar(&listen, "listen", ":10001", "prometheus metrics port")
 }
 
@@ -32,7 +30,7 @@ func main() {
 	}
 
 	// myAuthInfo contains all auth data
-	endpoint := mafreebox + "api/" + version + "/login/"
+	endpoint := mafreebox + "api/v4/login/"
 	myAuthInfo := &authInfo{
 		myAPI: api{
 			login:        endpoint,
@@ -53,13 +51,13 @@ func main() {
 
 	myLanRequest := &postRequest{
 		method: "GET",
-		url:    mafreebox + "api/" + version + "/lan/browser/pub/",
+		url:    mafreebox + "api/v4/lan/browser/pub/",
 		header: "X-Fbx-App-Auth",
 	}
 
 	mySystemRequest := &postRequest{
 		method: "GET",
-		url:    mafreebox + "api/" + version + "/system/",
+		url:    mafreebox + "api/v4/system/",
 		header: "X-Fbx-App-Auth",
 	}
 
@@ -69,51 +67,96 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			rateUp, rateDown, snrUp, snrDown, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
+			getDslResult, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
 				log.Print(err)
 			}
-			rateUpGauge.Set(float64(rateUp))
-			rateDownGauge.Set(float64(rateDown))
-			snrUpGauge.Set(float64(snrUp))
-			snrDownGauge.Set(float64(snrDown))
+
+			if len(getDslResult) == 0 {
+				rateUpGauge.Set(float64(0))
+				rateDownGauge.Set(float64(0))
+				snrUpGauge.Set(float64(0))
+				snrDownGauge.Set(float64(0))
+			} else {
+				rateUpGauge.Set(float64(getDslResult[0]))
+				rateDownGauge.Set(float64(getDslResult[1]))
+				snrUpGauge.Set(float64(getDslResult[2]))
+				snrDownGauge.Set(float64(getDslResult[3]))
+			}
 
 			// switch metrcis
-			rx1, tx1, rx2, tx2, rx3, tx3, rx4, tx4, err := getSwitch(myAuthInfo, myPostRequest, &mySessionToken)
-			if err != nil {
-				log.Print(err)
-			}
-			rx1Gauge.Set(float64(rx1))
-			tx1Gauge.Set(float64(tx1))
-			rx2Gauge.Set(float64(rx2))
-			tx2Gauge.Set(float64(tx2))
-			rx3Gauge.Set(float64(rx3))
-			tx3Gauge.Set(float64(tx3))
-			rx4Gauge.Set(float64(rx4))
-			tx4Gauge.Set(float64(tx4))
+			// as switch database seems to be broken, this one is not used at this time
+			/*
+				getSwitchResult, err := getSwitch(myAuthInfo, myPostRequest, &mySessionToken)
+				if err != nil {
+					log.Print(err)
+				}
+
+				if len(getSwitchResult) == 0 {
+					rx1Gauge.Set(float64(0))
+					tx1Gauge.Set(float64(0))
+					rx2Gauge.Set(float64(0))
+					tx2Gauge.Set(float64(0))
+					rx3Gauge.Set(float64(0))
+					tx3Gauge.Set(float64(0))
+					rx4Gauge.Set(float64(0))
+					tx4Gauge.Set(float64(0))
+				} else {
+					rx1Gauge.Set(float64(getSwitchResult[0]))
+					tx1Gauge.Set(float64(getSwitchResult[1]))
+					rx2Gauge.Set(float64(getSwitchResult[2]))
+					tx2Gauge.Set(float64(getSwitchResult[3]))
+					rx3Gauge.Set(float64(getSwitchResult[4]))
+					tx3Gauge.Set(float64(getSwitchResult[5]))
+					rx4Gauge.Set(float64(getSwitchResult[6]))
+					tx4Gauge.Set(float64(getSwitchResult[7]))
+				}
+			*/
 
 			// temps metrcis
-			cpum, cpub, sw, hdd, fanSpeed, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
-			if err != nil {
-				log.Print(err)
-			}
-			cpumGauge.Set(float64(cpum))
-			cpubGauge.Set(float64(cpub))
-			swGauge.Set(float64(sw))
-			hddGauge.Set(float64(hdd))
-			fanSpeedGauge.Set(float64(fanSpeed))
+			// as temp database seems to be broken, this one is not used at this time
+			/*
+				getTempResult, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
+				if err != nil {
+					log.Print(err)
+				}
+
+				if len(getTempResult) == 0 {
+					cpumGauge.Set(float64(0))
+					cpubGauge.Set(float64(0))
+					swGauge.Set(float64(0))
+					hddGauge.Set(float64(0))
+					fanSpeedGauge.Set(float64(0))
+				} else {
+					cpumGauge.Set(float64(getTempResult[0]))
+					cpubGauge.Set(float64(getTempResult[1]))
+					swGauge.Set(float64(getTempResult[2]))
+					hddGauge.Set(float64(getTempResult[3]))
+					fanSpeedGauge.Set(float64(getTempResult[4]))
+				}
+			*/
 
 			// net metrics
-			bwUp, bwDown, netRateUp, netRateDown, vpnRateUp, vpnRateDown, err := getNet(myAuthInfo, myPostRequest, &mySessionToken)
+			getNetResult, err := getNet(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
 				log.Print(err)
 			}
-			bwUpGauge.Set(float64(bwUp))
-			bwDownGauge.Set(float64(bwDown))
-			netRateUpGauge.Set(float64(netRateUp))
-			netRateDownGauge.Set(float64(netRateDown))
-			vpnRateUpGauge.Set(float64(vpnRateUp))
-			vpnRateDownGauge.Set(float64(vpnRateDown))
+
+			if len(getNetResult) == 0 {
+				bwUpGauge.Set(float64(0))
+				bwDownGauge.Set(float64(0))
+				netRateUpGauge.Set(float64(0))
+				netRateDownGauge.Set(float64(0))
+				vpnRateUpGauge.Set(float64(0))
+				vpnRateDownGauge.Set(float64(0))
+			} else {
+				bwUpGauge.Set(float64(getNetResult[0]))
+				bwDownGauge.Set(float64(getNetResult[1]))
+				netRateUpGauge.Set(float64(getNetResult[2]))
+				netRateDownGauge.Set(float64(getNetResult[3]))
+				vpnRateUpGauge.Set(float64(getNetResult[4]))
+				vpnRateDownGauge.Set(float64(getNetResult[5]))
+			}
 
 			// lan metrics
 			lanAvailable, err := getLan(myAuthInfo, myLanRequest, &mySessionToken)
@@ -147,6 +190,7 @@ func main() {
 	}()
 
 	// expose the registered metrics via HTTP OpenMetrics
+	log.Println("freebox_exporter started on port", listen)
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(listen, nil))
 }
