@@ -22,29 +22,27 @@ var (
 		"new_apps_denied":         errors.New("New application token request has been disabled"),
 		"apps_denied":             errors.New("API access from apps has been disabled"),
 		"internal_error":          errors.New("Internal error"),
+		"db_error":                errors.New("Oops, The database you are trying to access doesn't seem to exist"),
 	}
 )
 
 func (r *rrd) status() error {
 	if apiErrors[r.ErrorCode] == nil {
-		fmt.Println("rrd error_code", r.ErrorCode)
-		return errors.New("Unknown return code from the API")
+		return errors.New("RRD: The API returns an unknown error_code")
 	}
 	return apiErrors[r.ErrorCode]
 }
 
 func (l *lan) status() error {
 	if apiErrors[l.ErrorCode] == nil {
-		fmt.Println("Lan error_code", l.ErrorCode)
-		return errors.New("Unknown return code from the API")
+		return errors.New("LAN: The API returns an unknown error_code")
 	}
 	return apiErrors[l.ErrorCode]
 }
 
 func (s *system) status() error {
 	if apiErrors[s.ErrorCode] == nil {
-		fmt.Println("System error_code", s.ErrorCode)
-		return errors.New("Unknown return code from the API")
+		return errors.New("SYSTEM: The API returns an unknown error_code")
 	}
 	return apiErrors[s.ErrorCode]
 }
@@ -138,33 +136,7 @@ func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		}
 		return []int{}, rrdTest.status()
 	}
-	/*
-		switch rrdTest.ErrorCode {
-		case "auth_required":
-			*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
-			if err != nil {
-				return []int{}, err
-			}
-		case "invalid_token":
-			return []int{}, apiErrors["auth_required"]
-		case "pending_token":
-			log.Println("The app token you are trying to use has not been validated by user yet")
-		case "insufficient_rights":
-			return []int{}, apiErrors["insufficient_rights"]
-		case "denied_from_external_ip":
-			return []int{}, apiErrors["denied_from_external_ip"]
-		case "invalid_request":
-			return []int{}, apiErrors["invalid_request"]
-		case "ratelimited":
-			return []int{}, apiErrors["ratelimited"]
-		case "new_apps_denied":
-			return []int{}, apiErrors["new_apps_denied"]
-		case "apps_denied":
-			return []int{}, apiErrors["apps_denied"]
-		case "internal_error":
-			return []int{}, apiErrors["internal_error"]
-		}
-	*/
+
 	if len(rrdTest.Result.Data) == 0 {
 		return []int{}, nil
 	}
@@ -229,34 +201,6 @@ func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, 
 		return []int{}, rrdTest.status()
 	}
 
-	/*
-		switch rrdTest.ErrorCode {
-		case "auth_required":
-			*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
-			if err != nil {
-				return []int{}, err
-			}
-		case "invalid_token":
-			return []int{}, apiErrors["invalid_token"]
-		case "pending_token":
-			log.Println("The app token you are trying to use has not been validated by user yet")
-		case "insufficient_rights":
-			return []int{}, apiErrors["insufficient_rights"]
-		case "denied_from_external_ip":
-			return []int{}, apiErrors["denied_from_external_ip"]
-		case "invalid_request":
-			return []int{}, apiErrors["invalid_request"]
-		case "ratelimited":
-			return []int{}, apiErrors["ratelimited"]
-		case "new_apps_denied":
-			return []int{}, apiErrors["new_apps_denied"]
-		case "apps_denied":
-			return []int{}, apiErrors["apps_denied"]
-		case "internal_error":
-			return []int{}, apiErrors["internal_error"]
-		}
-	*/
-
 	if len(rrdTest.Result.Data) == 0 {
 		return []int{}, nil
 	}
@@ -319,33 +263,6 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		}
 		return []int{}, rrdTest.status()
 	}
-	/*
-		switch rrdTest.ErrorCode {
-		case "auth_required":
-			*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
-			if err != nil {
-				return []int{}, err
-			}
-		case "invalid_token":
-			return []int{}, apiErrors["invalid_token"]
-		case "pending_token":
-			log.Println("The app token you are trying to use has not been validated by user yet")
-		case "insufficient_rights":
-			return []int{}, apiErrors["insufficient_rights"]
-		case "denied_from_external_ip":
-			return []int{}, apiErrors["denied_from_external_ip"]
-		case "invalid_request":
-			return []int{}, apiErrors["invalid_request"]
-		case "ratelimited":
-			return []int{}, apiErrors["ratelimited"]
-		case "new_apps_denied":
-			return []int{}, apiErrors["new_apps_denied"]
-		case "apps_denied":
-			return []int{}, apiErrors["apps_denied"]
-		case "internal_error":
-			return []int{}, apiErrors["internal_error"]
-		}
-	*/
 
 	if len(rrdTest.Result.Data) == 0 {
 		return []int{}, nil
@@ -409,33 +326,7 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 		}
 		return []int{}, rrdTest.status()
 	}
-	/*
-		switch rrdTest.ErrorCode {
-		case "auth_required":
-			*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
-			if err != nil {
-				return []int{}, err
-			}
-		case "invalid_token":
-			return []int{}, apiErrors["invalid_token"]
-		case "pending_token":
-			log.Println("The app token you are trying to use has not been validated by user yet")
-		case "insufficient_rights":
-			return []int{}, apiErrors["insufficient_rights"]
-		case "denied_from_external_ip":
-			return []int{}, apiErrors["denied_from_external_ip"]
-		case "invalid_request":
-			return []int{}, apiErrors["invalid_request"]
-		case "ratelimited":
-			return []int{}, apiErrors["ratelimited"]
-		case "new_apps_denied":
-			return []int{}, apiErrors["new_apps_denied"]
-		case "apps_denied":
-			return []int{}, apiErrors["apps_denied"]
-		case "internal_error":
-			return []int{}, apiErrors["internal_error"]
-		}
-	*/
+
 	if len(rrdTest.Result.Data) == 0 {
 		return []int{}, nil
 	}
@@ -487,34 +378,6 @@ func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHos
 		return []lanHost{}, lanResp.status()
 	}
 
-	/*
-		switch lanResp.ErrorCode {
-		case "auth_required":
-			*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
-			if err != nil {
-				return []lanHost{}, err
-			}
-		case "invalid_token":
-			return []lanHost{}, apiErrors["invalid_token"]
-		case "pending_token":
-			log.Println("The app token you are trying to use has not been validated by user yet")
-		case "insufficient_rights":
-			return []lanHost{}, apiErrors["insufficient_rights"]
-		case "denied_from_external_ip":
-			return []lanHost{}, apiErrors["denied_from_external_ip"]
-		case "invalid_request":
-			return []lanHost{}, apiErrors["invalid_request"]
-		case "ratelimited":
-			return []lanHost{}, apiErrors["ratelimited"]
-		case "new_apps_denied":
-			return []lanHost{}, apiErrors["new_apps_denied"]
-		case "apps_denied":
-			return []lanHost{}, apiErrors["apps_denied"]
-		case "internal_error":
-			return []lanHost{}, apiErrors["internal_error"]
-		}
-	*/
-
 	return lanResp.Result, nil
 }
 
@@ -558,32 +421,6 @@ func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (syste
 	if systemResp.ErrorCode != "" {
 		return systemR{}, systemResp.status()
 	}
-	/*
-		switch systemResp.ErrorCode {
-		case "auth_required":
-			*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
-			if err != nil {
-				return systemR{}, err
-			}
-		case "invalid_token":
-			return systemR{}, apiErrors["invalid_token"]
-		case "pending_token":
-			log.Println("The app token you are trying to use has not been validated by user yet")
-		case "insufficient_rights":
-			return systemR{}, apiErrors["insufficient_rights"]
-		case "denied_from_external_ip":
-			return systemR{}, apiErrors["denied_from_external_ip"]
-		case "invalid_request":
-			return systemR{}, apiErrors["invalid_request"]
-		case "ratelimited":
-			return systemR{}, apiErrors["ratelimited"]
-		case "new_apps_denied":
-			return systemR{}, apiErrors["new_apps_denied"]
-		case "apps_denied":
-			return systemR{}, apiErrors["apps_denied"]
-		case "internal_error":
-			return systemR{}, apiErrors["internal_error"]
-		}
-	*/
+
 	return systemResp.Result, nil
 }

@@ -7,7 +7,6 @@ A prometheus exporter for freebox stats
 
 ## Flags
 
-- `-version`: freebox API version (default v6)
 - `-endpoint`: freebox API url (default http://mafreebox.freebox.fr)
 - `-listen`: port for prometheus metrics (default :10001)
 
@@ -28,12 +27,6 @@ Here's what you can get in Prometheus / Grafana with freebox_exporter:
 ```
 
 ### The following parameters are optional and can be superseed:
-
-- Freebox API version
-
-```
-./freebox_exporter -version "v6"
-```
 
 - Freebox API endpoint
 
@@ -65,13 +58,6 @@ Volume allows to save the access token outside of the container to reuse authent
 ```
 docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
   -e HOME=token -v /path/to/token:/token saphoooo/freebox-exporter
-```
-
-- Freebox API version
-
-```
-docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
-  saphoooo/freebox-exporter -version "v6"
 ```
 
 - Freebox API endpoint

@@ -25,61 +25,66 @@ var (
 	})
 
 	// RRD switch gauges
-	rx1Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx1_bytes",
-		Help: "Receive rate on port 1 (in byte/s)",
-	})
-	tx1Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx1_bytes",
-		Help: "Transmit on port 1 (in byte/s)",
-	})
-	rx2Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx2_bytes",
-		Help: "Receive rate on port 2 (in byte/s)",
-	})
-	tx2Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx2_bytes",
-		Help: "Transmit on port 2 (in byte/s)",
-	})
-	rx3Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx3_bytes",
-		Help: "Receive rate on port 3 (in byte/s)",
-	})
-	tx3Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx3_bytes",
-		Help: "Transmit on port 3 (in byte/s)",
-	})
-	rx4Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_rx4_bytes",
-		Help: "Receive rate on port 4 (in byte/s)",
-	})
-	tx4Gauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_switch_tx4_bytes",
-		Help: "Transmit on port 4 (in byte/s)",
-	})
+	// as switch database seems to be broken, this one is not used at this time
+	/*
+		rx1Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_rx1_bytes",
+			Help: "Receive rate on port 1 (in byte/s)",
+		})
+		tx1Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_tx1_bytes",
+			Help: "Transmit on port 1 (in byte/s)",
+		})
+		rx2Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_rx2_bytes",
+			Help: "Receive rate on port 2 (in byte/s)",
+		})
+		tx2Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_tx2_bytes",
+			Help: "Transmit on port 2 (in byte/s)",
+		})
+		rx3Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_rx3_bytes",
+			Help: "Receive rate on port 3 (in byte/s)",
+		})
+		tx3Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_tx3_bytes",
+			Help: "Transmit on port 3 (in byte/s)",
+		})
+		rx4Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_rx4_bytes",
+			Help: "Receive rate on port 4 (in byte/s)",
+		})
+		tx4Gauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_switch_tx4_bytes",
+			Help: "Transmit on port 4 (in byte/s)",
+		})
+	*/
 
 	// RRD temp gauges
-	// these ones look broken, use system temp gauges instead
-	cpumGauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_cpum_celsius",
-		Help: "Temperature cpum (in °C)",
-	})
-	cpubGauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_cpub_celsius",
-		Help: "Temperature cpub (in °C)",
-	})
-	swGauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_sw_celsius",
-		Help: "Temperature sw (in °C)",
-	})
-	hddGauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_hdd_celsius",
-		Help: "Temperature hdd (in °C)",
-	})
-	fanSpeedGauge = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "freebox_temp_fan_speed_rpm",
-		Help: "Fan rpm",
-	})
+	// as temp database seems to be broken, this one is not used at this time
+	/*
+		cpumGauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_temp_cpum_celsius",
+			Help: "Temperature cpum (in °C)",
+		})
+		cpubGauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_temp_cpub_celsius",
+			Help: "Temperature cpub (in °C)",
+		})
+		swGauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_temp_sw_celsius",
+			Help: "Temperature sw (in °C)",
+		})
+		hddGauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_temp_hdd_celsius",
+			Help: "Temperature hdd (in °C)",
+		})
+		fanSpeedGauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_temp_fan_speed_rpm",
+			Help: "Fan rpm",
+		})
+	*/
 
 	// RRD net gauges
 	bwUpGauge = promauto.NewGauge(prometheus.GaugeOpts{

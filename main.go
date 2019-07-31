@@ -85,50 +85,56 @@ func main() {
 			}
 
 			// switch metrcis
-			getSwitchResult, err := getSwitch(myAuthInfo, myPostRequest, &mySessionToken)
-			if err != nil {
-				log.Print(err)
-			}
+			// as switch database seems to be broken, this one is not used at this time
+			/*
+				getSwitchResult, err := getSwitch(myAuthInfo, myPostRequest, &mySessionToken)
+				if err != nil {
+					log.Print(err)
+				}
 
-			if len(getSwitchResult) == 0 {
-				rx1Gauge.Set(float64(0))
-				tx1Gauge.Set(float64(0))
-				rx2Gauge.Set(float64(0))
-				tx2Gauge.Set(float64(0))
-				rx3Gauge.Set(float64(0))
-				tx3Gauge.Set(float64(0))
-				rx4Gauge.Set(float64(0))
-				tx4Gauge.Set(float64(0))
-			} else {
-				rx1Gauge.Set(float64(getSwitchResult[0]))
-				tx1Gauge.Set(float64(getSwitchResult[1]))
-				rx2Gauge.Set(float64(getSwitchResult[2]))
-				tx2Gauge.Set(float64(getSwitchResult[3]))
-				rx3Gauge.Set(float64(getSwitchResult[4]))
-				tx3Gauge.Set(float64(getSwitchResult[5]))
-				rx4Gauge.Set(float64(getSwitchResult[6]))
-				tx4Gauge.Set(float64(getSwitchResult[7]))
-			}
+				if len(getSwitchResult) == 0 {
+					rx1Gauge.Set(float64(0))
+					tx1Gauge.Set(float64(0))
+					rx2Gauge.Set(float64(0))
+					tx2Gauge.Set(float64(0))
+					rx3Gauge.Set(float64(0))
+					tx3Gauge.Set(float64(0))
+					rx4Gauge.Set(float64(0))
+					tx4Gauge.Set(float64(0))
+				} else {
+					rx1Gauge.Set(float64(getSwitchResult[0]))
+					tx1Gauge.Set(float64(getSwitchResult[1]))
+					rx2Gauge.Set(float64(getSwitchResult[2]))
+					tx2Gauge.Set(float64(getSwitchResult[3]))
+					rx3Gauge.Set(float64(getSwitchResult[4]))
+					tx3Gauge.Set(float64(getSwitchResult[5]))
+					rx4Gauge.Set(float64(getSwitchResult[6]))
+					tx4Gauge.Set(float64(getSwitchResult[7]))
+				}
+			*/
 
 			// temps metrcis
-			getTempResult, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
-			if err != nil {
-				log.Print(err)
-			}
+			// as temp database seems to be broken, this one is not used at this time
+			/*
+				getTempResult, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
+				if err != nil {
+					log.Print(err)
+				}
 
-			if len(getTempResult) == 0 {
-				cpumGauge.Set(float64(0))
-				cpubGauge.Set(float64(0))
-				swGauge.Set(float64(0))
-				hddGauge.Set(float64(0))
-				fanSpeedGauge.Set(float64(0))
-			} else {
-				cpumGauge.Set(float64(getTempResult[0]))
-				cpubGauge.Set(float64(getTempResult[1]))
-				swGauge.Set(float64(getTempResult[2]))
-				hddGauge.Set(float64(getTempResult[3]))
-				fanSpeedGauge.Set(float64(getTempResult[4]))
-			}
+				if len(getTempResult) == 0 {
+					cpumGauge.Set(float64(0))
+					cpubGauge.Set(float64(0))
+					swGauge.Set(float64(0))
+					hddGauge.Set(float64(0))
+					fanSpeedGauge.Set(float64(0))
+				} else {
+					cpumGauge.Set(float64(getTempResult[0]))
+					cpubGauge.Set(float64(getTempResult[1]))
+					swGauge.Set(float64(getTempResult[2]))
+					hddGauge.Set(float64(getTempResult[3]))
+					fanSpeedGauge.Set(float64(getTempResult[4]))
+				}
+			*/
 
 			// net metrics
 			getNetResult, err := getNet(myAuthInfo, myPostRequest, &mySessionToken)
