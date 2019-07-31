@@ -84,6 +84,10 @@ var (
 			Name: "freebox_temp_fan_speed_rpm",
 			Help: "Fan rpm",
 		})
+		firmwareVersionGauge = promauto.NewGauge(prometheus.GaugeOpts{
+			Name: "freebox_firmware_version",
+			Help: "Firmware version",
+		})
 	*/
 
 	// RRD net gauges
@@ -123,6 +127,7 @@ var (
 			"name",
 		},
 	)
+
 	// SYSTEM temp gauges
 	systemTempGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -130,7 +135,6 @@ var (
 			Help: "Temp sensors reported by system (in °C)",
 		},
 		[]string{
-			"id",
 			"name",
 		},
 	)
@@ -142,8 +146,33 @@ var (
 			Help: "Fan speed reported by system (in rpm)",
 		},
 		[]string{
-			"id",
 			"name",
 		},
 	)
+
+	/*
+		// SYSTEM temp gauges
+		systemTempGauges = promauto.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Name: "freebox_system_temp_celsius",
+				Help: "Temp sensors reported by system (in °C)",
+			},
+			[]string{
+				"id",
+				"name",
+			},
+		)
+
+		// SYSTEM fan gauges
+		systemFanGauges = promauto.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Name: "freebox_system_fan_rpm",
+				Help: "Fan speed reported by system (in rpm)",
+			},
+			[]string{
+				"id",
+				"name",
+			},
+		)
+	*/
 )

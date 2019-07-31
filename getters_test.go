@@ -511,74 +511,61 @@ func TestGetSystem(t *testing.T) {
 	defer os.Unsetenv("FREEBOX_TOKEN")
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case "/good":
-			mySys := system{
-				Success: true,
-			}
-			mySys.Result = systemR{
-				Sensors: []idNameValue{
-					idNameValue{
-						ID:    "sensor01",
-						Name:  "Sensor",
-						Value: 01,
-					},
-				},
-				Fans: []idNameValue{
-					idNameValue{
-						ID:    "fan01",
-						Name:  "Fan",
-						Value: 02,
-					},
-				},
-			}
-			result, _ := json.Marshal(mySys)
-			fmt.Fprintln(w, string(result))
-		case "/error":
-			mySys := system{
-				Success:   true,
-				ErrorCode: "invalid_token",
-			}
-			result, _ := json.Marshal(mySys)
-			fmt.Fprintln(w, string(result))
+		mySys := system{
+			Success: true,
 		}
+		mySys.Result.FanRPM = 666
+		mySys.Result.TempCpub = 81
+		mySys.Result.TempCpum = 89
+		mySys.Result.TempHDD = 30
+		mySys.Result.TempSW = 54
+
+		/*
+			mySys.Result {
+				FanRPM:   666,
+				TempCpub: 81,
+				TempCpum: 89,
+				TempHDD:  30,
+				TempSW:   54,
+			}
+		*/
+		result, _ := json.Marshal(mySys)
+		fmt.Fprintln(w, string(result))
 	}))
 	defer ts.Close()
 
-	goodPR := &postRequest{
+	pr := &postRequest{
 		method: "GET",
 		header: "X-Fbx-App-Auth",
-		url:    ts.URL + "/good",
-	}
-
-	errorPR := &postRequest{
-		method: "GET",
-		header: "X-Fbx-App-Auth",
-		url:    ts.URL + "/error",
+		url:    ts.URL,
 	}
 
 	ai := &authInfo{}
 	mySessionToken := "foobar"
 
-	systemStats, err := getSystem(ai, goodPR, &mySessionToken)
+	systemStats, err := getSystem(ai, pr, &mySessionToken)
 	if err != nil {
 		t.Error("Expected no err, but got", err)
 	}
-	sensors := systemStats.Sensors
-	fans := systemStats.Fans
-	for _, v := range sensors {
-		if v.ID != "sensor01" || v.Name != "Sensor" || v.Value != 01 {
-			t.Errorf("Expected sensor01 Sensor 01, but got %s %s %d", v.ID, v.Name, v.Value)
-		}
-	}
-	for _, v := range fans {
-		if v.ID != "fan01" || v.Name != "Fan" || v.Value != 02 {
-			t.Errorf("Expected fan01 Fan 02, but got %s %s %d", v.ID, v.Name, v.Value)
-		}
+
+	if systemStats.Result.FanRPM != 666 {
+		t.Error("Expected 666, but got", systemStats.Result.FanRPM)
 	}
 
-	systemStats, err = getSystem(ai, errorPR, &mySessionToken)
-	if err.Error() != "The app token you are trying to use is invalid or has been revoked" {
-		t.Error("Expected The app token you are trying to use is invalid or has been revoked, but got", err)
+	if systemStats.Result.TempCpub != 81 {
+		t.Error("Expected 81, but got", systemStats.Result.TempCpub)
 	}
+
+	if systemStats.Result.TempCpum != 89 {
+		t.Error("Expected 89, but got", systemStats.Result.TempCpum)
+	}
+
+	if systemStats.Result.TempHDD != 30 {
+		t.Error("Expected 30, but got", systemStats.Result.TempHDD)
+	}
+
+	if systemStats.Result.TempSW != 54 {
+		t.Error("Expected 54, but got", systemStats.Result.TempSW)
+	}
+
 }

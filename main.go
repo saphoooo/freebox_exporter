@@ -115,6 +115,7 @@ func main() {
 
 			// temps metrcis
 			// as temp database seems to be broken, this one is not used at this time
+			// system report the same kind of value
 			/*
 				getTempResult, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
 				if err != nil {
@@ -171,19 +172,17 @@ func main() {
 				}
 			}
 
-			// fan metrics
+			// system metrics
 			systemStats, err := getSystem(myAuthInfo, mySystemRequest, &mySessionToken)
 			if err != nil {
 				log.Print(err)
 			}
-			sensors := systemStats.Sensors
-			fans := systemStats.Fans
-			for _, v := range sensors {
-				systemTempGauges.WithLabelValues(v.ID, v.Name).Set(float64(v.Value))
-			}
-			for _, v := range fans {
-				systemFanGauges.WithLabelValues(v.ID, v.Name).Set(float64(v.Value))
-			}
+
+			systemTempGauges.WithLabelValues("Température CPU B").Set(float64(systemStats.Result.TempCpub))
+			systemTempGauges.WithLabelValues("Température CPU M").Set(float64(systemStats.Result.TempCpum))
+			systemTempGauges.WithLabelValues("Disque dur").Set(float64(systemStats.Result.TempHDD))
+			systemTempGauges.WithLabelValues("Température Switch").Set(float64(systemStats.Result.TempSW))
+			systemFanGauges.WithLabelValues("Ventilateur 1").Set(float64(systemStats.Result.FanRPM))
 
 			time.Sleep(10 * time.Second)
 		}

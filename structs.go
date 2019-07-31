@@ -95,10 +95,52 @@ type systemR struct {
 	Fans    []idNameValue `json:"fans"`
 }
 
+/*
+type systemResult struct {
+	Mac              string `json:"mac"`
+	FanRPM           int    `json:"fan_rpm"`
+	BoxFlavor        string `json:"box_flavor"`
+	TempCpub         int    `json:"temp_cpub"`
+	TempCpum         int    `json:"temp_cpum"`
+	DiskStatus       string `json:"disk_status"`
+	TempHDD          int    `json:"temp_hdd"`
+	BoardName        string `json:"board_name"`
+	TempSW           int    `json:"temp_sw"`
+	Uptime           string `json:"uptime"`
+	UptimeVal        int    `json:"uptime_val"`
+	UserMainStorage  string `json:"user_main_storage"`
+	BoxAuthenticated bool   `json:"box_authenticated"`
+	Serial           string `json:"serial"`
+	FirmwareVersion  string `json:"firmware_version"`
+}
+*/
+/*
 type system struct {
-	Success   bool    `json:"success"`
-	Result    systemR `json:"result"`
-	ErrorCode string  `json:"error_code"`
+	Success   bool         `json:"success"`
+	Result    systemResult `json:"result"`
+	ErrorCode string       `json:"error_code"`
+}
+*/
+
+type system struct {
+	Success bool `json:"success"`
+	Result  struct {
+		Mac              string `json:"mac,omitempty"`
+		FanRPM           int    `json:"fan_rpm,omitempty"`
+		BoxFlavor        string `json:"box_flavor,omitempty"`
+		TempCpub         int    `json:"temp_cpub,omitempty"`
+		TempCpum         int    `json:"temp_cpum,omitempty"`
+		DiskStatus       string `json:"disk_status,omitempty"`
+		TempHDD          int    `json:"temp_hdd,omitempty"`
+		BoardName        string `json:"board_name,omitempty"`
+		TempSW           int    `json:"temp_sw,omitempty"`
+		Uptime           string `json:"uptime,omitempty"`
+		UptimeVal        int    `json:"uptime_val,omitempty"`
+		UserMainStorage  string `json:"user_main_storage,omitempty"`
+		BoxAuthenticated bool   `json:"box_authenticated,omitempty"`
+		Serial           string `json:"serial,omitempty"`
+		FirmwareVersion  string `json:"firmware_version,omitempty"`
+	}
 }
 
 type app struct {

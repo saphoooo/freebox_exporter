@@ -40,13 +40,6 @@ func (l *lan) status() error {
 	return apiErrors[l.ErrorCode]
 }
 
-func (s *system) status() error {
-	if apiErrors[s.ErrorCode] == nil {
-		return errors.New("SYSTEM: The API returns an unknown error_code")
-	}
-	return apiErrors[s.ErrorCode]
-}
-
 // setFreeboxToken ensure that there is an active token for a call
 func setFreeboxToken(authInf *authInfo, xSessionToken *string) (string, error) {
 
@@ -382,45 +375,31 @@ func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHos
 }
 
 // getLan get lan statistics
-func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (systemR, error) {
-	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
-	if err != nil {
-		return systemR{}, err
-	}
+func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (system, error) {
 
 	client := http.Client{}
 	req, err := http.NewRequest(pr.method, pr.url, nil)
 	if err != nil {
-		return systemR{}, err
+		return system{}, err
 	}
 	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
-		return systemR{}, err
+		return system{}, err
 	}
 	if resp.StatusCode == 404 {
-		return systemR{}, errors.New(resp.Status)
+		return system{}, errors.New(resp.Status)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return systemR{}, err
+		return system{}, err
 	}
+
 	systemResp := system{}
 	err = json.Unmarshal(body, &systemResp)
 	if err != nil {
-		return systemR{}, err
+		return system{}, err
 	}
 
-	if systemResp.ErrorCode == "auth_required" {
-		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
-		if err != nil {
-			return systemR{}, err
-		}
-	}
-
-	if systemResp.ErrorCode != "" {
-		return systemR{}, systemResp.status()
-	}
-
-	return systemResp.Result, nil
+	return systemResp, nil
 }
