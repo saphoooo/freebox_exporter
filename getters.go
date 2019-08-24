@@ -28,14 +28,14 @@ var (
 
 func (r *rrd) status() error {
 	if apiErrors[r.ErrorCode] == nil {
-		return errors.New("RRD: The API returns an unknown error_code")
+		return errors.New("RRD: The API returns an unknown error_code: " + r.ErrorCode)
 	}
 	return apiErrors[r.ErrorCode]
 }
 
 func (l *lan) status() error {
 	if apiErrors[l.ErrorCode] == nil {
-		return errors.New("LAN: The API returns an unknown error_code")
+		return errors.New("LAN: The API returns an unknown error_code: " + l.ErrorCode)
 	}
 	return apiErrors[l.ErrorCode]
 }
