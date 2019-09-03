@@ -15,11 +15,13 @@ import (
 var (
 	mafreebox string
 	listen    string
+	debug     bool
 )
 
 func init() {
 	flag.StringVar(&mafreebox, "endpoint", "http://mafreebox.freebox.fr/", "Endpoint for freebox API")
 	flag.StringVar(&listen, "listen", ":10001", "prometheus metrics port")
+	flag.BoolVar(&debug, "debug", false, "debug mode")
 }
 
 func main() {
@@ -69,7 +71,7 @@ func main() {
 			// dsl metrics
 			getDslResult, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
-				log.Print(err)
+				log.Printf("An error occured with DSL metrics: %v", err)
 			}
 
 			if len(getDslResult) == 0 {
@@ -140,7 +142,7 @@ func main() {
 			// net metrics
 			getNetResult, err := getNet(myAuthInfo, myPostRequest, &mySessionToken)
 			if err != nil {
-				log.Print(err)
+				log.Printf("An error occured with NET metrics: %v", err)
 			}
 
 			if len(getNetResult) == 0 {
@@ -162,7 +164,7 @@ func main() {
 			// lan metrics
 			lanAvailable, err := getLan(myAuthInfo, myLanRequest, &mySessionToken)
 			if err != nil {
-				log.Print(err)
+				log.Printf("An error occured with LAN metrics: %v", err)
 			}
 			for _, v := range lanAvailable {
 				if v.Reachable {
@@ -175,7 +177,7 @@ func main() {
 			// system metrics
 			systemStats, err := getSystem(myAuthInfo, mySystemRequest, &mySessionToken)
 			if err != nil {
-				log.Print(err)
+				log.Printf("An error occured with System metrics: %v", err)
 			}
 
 			systemTempGauges.WithLabelValues("Température CPU B").Set(float64(systemStats.Result.TempCpub))

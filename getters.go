@@ -113,6 +113,9 @@ func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	if err != nil {
+		if debug {
+			log.Println(body)
+		}
 		return []int{}, err
 	}
 
@@ -177,6 +180,9 @@ func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, 
 	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	if err != nil {
+		if debug {
+			log.Println(body)
+		}
 		return []int{}, err
 	}
 
@@ -240,6 +246,9 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	if err != nil {
+		if debug {
+			log.Println(body)
+		}
 		return []int{}, err
 	}
 
@@ -303,6 +312,9 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
 	if err != nil {
+		if debug {
+			log.Println(body)
+		}
 		return []int{}, err
 	}
 
@@ -357,6 +369,9 @@ func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHos
 	lanResp := lan{}
 	err = json.Unmarshal(body, &lanResp)
 	if err != nil {
+		if debug {
+			log.Println(body)
+		}
 		return []lanHost{}, err
 	}
 
@@ -398,6 +413,9 @@ func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (syste
 	systemResp := system{}
 	err = json.Unmarshal(body, &systemResp)
 	if err != nil {
+		if debug {
+			log.Println(body)
+		}
 		return system{}, err
 	}
 
