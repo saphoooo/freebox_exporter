@@ -1,7 +1,11 @@
 FROM golang 
+
 WORKDIR /
+
 COPY . .
+
 ADD https://github.com/upx/upx/releases/download/v3.95/upx-3.95-amd64_linux.tar.xz /usr/local
+
 RUN set -x && \
     apt update && \
     apt install -y xz-utils && \
@@ -14,7 +18,11 @@ RUN set -x && \
     upx app
 
 FROM scratch
+
 LABEL maintainer="stephane.beuret@gmail.com"
+
 COPY --from=0 app /
+
 COPY --from=0 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 ENTRYPOINT ["/app"]
