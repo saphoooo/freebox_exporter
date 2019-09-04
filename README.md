@@ -9,6 +9,8 @@ A prometheus exporter for freebox stats
 
 - `-endpoint`: freebox API url (default http://mafreebox.freebox.fr)
 - `-listen`: port for prometheus metrics (default :10001)
+- `-debug`: turn on debug mode
+- `-fiber`: turn off DSL metric for fiber Freebox
 
 ## Preview
 

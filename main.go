@@ -16,12 +16,14 @@ var (
 	mafreebox string
 	listen    string
 	debug     bool
+	fiber     bool
 )
 
 func init() {
 	flag.StringVar(&mafreebox, "endpoint", "http://mafreebox.freebox.fr/", "Endpoint for freebox API")
-	flag.StringVar(&listen, "listen", ":10001", "prometheus metrics port")
-	flag.BoolVar(&debug, "debug", false, "debug mode")
+	flag.StringVar(&listen, "listen", ":10001", "Prometheus metrics port")
+	flag.BoolVar(&debug, "debug", false, "Debug mode")
+	flag.BoolVar(&fiber, "fiber", false, "Turn on if you're using a fiber Freebox")
 }
 
 func main() {
@@ -69,75 +71,26 @@ func main() {
 	go func() {
 		for {
 			// dsl metrics
-			getDslResult, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
-			if err != nil {
-				log.Printf("An error occured with DSL metrics: %v", err)
-			}
-
-			if len(getDslResult) == 0 {
-				rateUpGauge.Set(float64(0))
-				rateDownGauge.Set(float64(0))
-				snrUpGauge.Set(float64(0))
-				snrDownGauge.Set(float64(0))
-			} else {
-				rateUpGauge.Set(float64(getDslResult[0]))
-				rateDownGauge.Set(float64(getDslResult[1]))
-				snrUpGauge.Set(float64(getDslResult[2]))
-				snrDownGauge.Set(float64(getDslResult[3]))
-			}
-
-			// switch metrcis
-			// as switch database seems to be broken, this one is not used at this time
-			/*
-				getSwitchResult, err := getSwitch(myAuthInfo, myPostRequest, &mySessionToken)
+			// There is no DSL metric on fiber Freebox
+			// If you use a fiber Freebox, use -fiber flag to turn off this metric
+			if !fiber {
+				getDslResult, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
 				if err != nil {
-					log.Print(err)
+					log.Printf("An error occured with DSL metrics: %v", err)
 				}
 
-				if len(getSwitchResult) == 0 {
-					rx1Gauge.Set(float64(0))
-					tx1Gauge.Set(float64(0))
-					rx2Gauge.Set(float64(0))
-					tx2Gauge.Set(float64(0))
-					rx3Gauge.Set(float64(0))
-					tx3Gauge.Set(float64(0))
-					rx4Gauge.Set(float64(0))
-					tx4Gauge.Set(float64(0))
+				if len(getDslResult) == 0 {
+					rateUpGauge.Set(float64(0))
+					rateDownGauge.Set(float64(0))
+					snrUpGauge.Set(float64(0))
+					snrDownGauge.Set(float64(0))
 				} else {
-					rx1Gauge.Set(float64(getSwitchResult[0]))
-					tx1Gauge.Set(float64(getSwitchResult[1]))
-					rx2Gauge.Set(float64(getSwitchResult[2]))
-					tx2Gauge.Set(float64(getSwitchResult[3]))
-					rx3Gauge.Set(float64(getSwitchResult[4]))
-					tx3Gauge.Set(float64(getSwitchResult[5]))
-					rx4Gauge.Set(float64(getSwitchResult[6]))
-					tx4Gauge.Set(float64(getSwitchResult[7]))
+					rateUpGauge.Set(float64(getDslResult[0]))
+					rateDownGauge.Set(float64(getDslResult[1]))
+					snrUpGauge.Set(float64(getDslResult[2]))
+					snrDownGauge.Set(float64(getDslResult[3]))
 				}
-			*/
-
-			// temps metrcis
-			// as temp database seems to be broken, this one is not used at this time
-			// system report the same kind of value
-			/*
-				getTempResult, err := getTemp(myAuthInfo, myPostRequest, &mySessionToken)
-				if err != nil {
-					log.Print(err)
-				}
-
-				if len(getTempResult) == 0 {
-					cpumGauge.Set(float64(0))
-					cpubGauge.Set(float64(0))
-					swGauge.Set(float64(0))
-					hddGauge.Set(float64(0))
-					fanSpeedGauge.Set(float64(0))
-				} else {
-					cpumGauge.Set(float64(getTempResult[0]))
-					cpubGauge.Set(float64(getTempResult[1]))
-					swGauge.Set(float64(getTempResult[2]))
-					hddGauge.Set(float64(getTempResult[3]))
-					fanSpeedGauge.Set(float64(getTempResult[4]))
-				}
-			*/
+			}
 
 			// net metrics
 			getNetResult, err := getNet(myAuthInfo, myPostRequest, &mySessionToken)
