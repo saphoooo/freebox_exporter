@@ -1,6 +1,6 @@
 {
 	"ImportPath": "freebox_exporter",
-	"GoVersion": "go1.11",
+	"GoVersion": "go1.13",
 	"GodepVersion": "v80",
 	"Deps": [
 		{
