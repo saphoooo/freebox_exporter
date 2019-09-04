@@ -126,7 +126,7 @@ func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		}
 	}
 
-	if rrdTest.ErrorCode != "" {
+	if rrdTest.ErrorCode != "" && rrdTest.ErrorCode != "auth_required" {
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getDsl")
 		}
@@ -193,7 +193,7 @@ func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, 
 		}
 	}
 
-	if rrdTest.ErrorCode != "" {
+	if rrdTest.ErrorCode != "" && rrdTest.ErrorCode != "auth_required" {
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getTemp")
 		}
@@ -259,7 +259,7 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		}
 	}
 
-	if rrdTest.ErrorCode != "" {
+	if rrdTest.ErrorCode != "" && rrdTest.ErrorCode != "auth_required" {
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getNet")
 		}
@@ -325,7 +325,7 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 		}
 	}
 
-	if rrdTest.ErrorCode != "" {
+	if rrdTest.ErrorCode != "" && rrdTest.ErrorCode != "auth_required" {
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getSwitch")
 		}
@@ -382,7 +382,7 @@ func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHos
 		}
 	}
 
-	if lanResp.ErrorCode != "" {
+	if lanResp.ErrorCode != "" && lanResp.ErrorCode != "auth_required" {
 		return []lanHost{}, lanResp.status()
 	}
 
