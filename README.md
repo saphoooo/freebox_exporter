@@ -33,7 +33,7 @@ Here's what you can get in Prometheus / Grafana with freebox_exporter:
 - Freebox API endpoint
 
 ```
-./freebox_exporter -endpoint "http://mafreebox.freebox.fr
+./freebox_exporter -endpoint "http://mafreebox.freebox.fr"
 ```
 
 - Port
