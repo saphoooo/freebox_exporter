@@ -22,7 +22,8 @@ var (
 		"new_apps_denied":         errors.New("New application token request has been disabled"),
 		"apps_denied":             errors.New("API access from apps has been disabled"),
 		"internal_error":          errors.New("Internal error"),
-		"db_error":                errors.New("Oops, The database you are trying to access doesn't seem to exist"),
+		"db_error":                errors.New("Oops, the database you are trying to access doesn't seem to exist"),
+		"nodev":                   errors.New("Invalid interface"),
 	}
 )
 
