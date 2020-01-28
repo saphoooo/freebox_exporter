@@ -22,6 +22,10 @@ Here's what you can get in Prometheus / Grafana with freebox_exporter:
 
 ## Compiled binary
 
+If you want to compile the binary, you can refer to [this document](https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63) which explains how to do it, depending on your OS and architecture.
+
+You can also find the compiled binairies for MacOS, Linux (x86_64, arm64 and arm) and Windows in the release tab.
+
 ### Quickstart
 
 ```
