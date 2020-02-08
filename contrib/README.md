@@ -6,4 +6,4 @@ Thanks to [mcanevet](https://gist.github.com/mcanevet) for his contribution:
 
 Thanks to [Pichon](https://github.com/lepichon) for his contribution:
 
-<img width="600" alt="lepichon Grafana dashbord" src="https://user-images.githubusercontent.com/13923756/74086200-e9fa8480-4a80-11ea-92d4-a4aca6f8c159.png>
+<img width="600" alt="lepichon Grafana dashbord" src="https://user-images.githubusercontent.com/13923756/74086200-e9fa8480-4a80-11ea-92d4-a4aca6f8c159.png">
