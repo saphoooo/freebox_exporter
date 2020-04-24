@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	// RRD dsl gauge
+	// RRD dsl gauges
 	rateUpGauge = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",
 		Help: "Available upload bandwidth (in byte/s)",
@@ -23,6 +23,32 @@ var (
 		Name: "freebox_dsl_snr_down_decibel",
 		Help: "Download signal/noise ratio (in 1/10 dB)",
 	})
+
+	// RRD freeplug gauges
+	freeplugRxRateGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "freebox_freeplug_rx_rate_bits",
+		Help: "rx rate (from the freeplugs to the \"cco\" freeplug) (in bits/s) -1 if not available",
+	},
+		[]string{
+			"id",
+		},
+	)
+	freeplugTxRateGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "freebox_freeplug_tx_rate_bits",
+		Help: "tx rate (from the \"cco\" freeplug to the freeplugs) (in bits/s) -1 if not available",
+	},
+		[]string{
+			"id",
+		},
+	)
+	freeplugHasNetworkGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "freebox_freeplug_has_network",
+		Help: "is connected to the network",
+	},
+		[]string{
+			"id",
+		},
+	)
 
 	// RRD switch gauges
 	// as switch database seems to be broken, this one is not used at this time
@@ -149,30 +175,4 @@ var (
 			"name",
 		},
 	)
-
-	/*
-		// SYSTEM temp gauges
-		systemTempGauges = promauto.NewGaugeVec(
-			prometheus.GaugeOpts{
-				Name: "freebox_system_temp_celsius",
-				Help: "Temp sensors reported by system (in °C)",
-			},
-			[]string{
-				"id",
-				"name",
-			},
-		)
-
-		// SYSTEM fan gauges
-		systemFanGauges = promauto.NewGaugeVec(
-			prometheus.GaugeOpts{
-				Name: "freebox_system_fan_rpm",
-				Help: "Fan speed reported by system (in rpm)",
-			},
-			[]string{
-				"id",
-				"name",
-			},
-		)
-	*/
 )

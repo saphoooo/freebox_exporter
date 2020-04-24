@@ -390,7 +390,37 @@ func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHos
 	return lanResp.Result, nil
 }
 
-// getLan get lan statistics
+func getFreeplug(authInf *authInfo, pr *postRequest, xSessionToken *string) (freeplug, error) {
+	client := http.Client{}
+	req, err := http.NewRequest(pr.method, pr.url, nil)
+	if err != nil {
+		return freeplug{}, err
+	}
+	req.Header.Add(pr.header, *xSessionToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return freeplug{}, err
+	}
+	if resp.StatusCode == 404 {
+		return freeplug{}, errors.New(resp.Status)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return freeplug{}, err
+	}
+
+	freeplugResp := freeplug{}
+	err = json.Unmarshal(body, &freeplugResp)
+	if err != nil {
+		if debug {
+			log.Println(string(body))
+		}
+		return freeplug{}, err
+	}
+
+	return freeplugResp, nil
+}
+
 func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (system, error) {
 
 	client := http.Client{}

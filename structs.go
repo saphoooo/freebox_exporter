@@ -73,6 +73,30 @@ type database struct {
 	Fields    []string `json:"fields"`
 }
 
+type freeplug struct {
+	Success bool              `json:"success"`
+	Result  []freeplugNetwork `json:"result"`
+}
+
+type freeplugNetwork struct {
+	ID      string           `json:"id"`
+	Members []freeplugMember `json:"members"`
+}
+
+type freeplugMember struct {
+	ID            string `json:"id"`
+	Local         bool   `json:"local"`
+	NetRole       string `json:"net_role"`
+	EthPortStatus string `json:"eth_port_status"`
+	EthFullDuplex bool   `json:"eth_full_duplex"`
+	HasNetwork    bool   `json:"has_network"`
+	EthSpeed      int    `json:"eth_speed"`
+	Inative       int    `json:"inactive"`
+	NetId         string `json:"net_id"`
+	RxRate        int    `json:"rx_rate"`
+	TxRate        int    `json:"tx_rate"`
+}
+
 type lanHost struct {
 	Reachable   bool   `json:"reachable,omitempty"`
 	PrimaryName string `json:"primary_name,omitempty"`
@@ -94,33 +118,6 @@ type systemR struct {
 	Sensors []idNameValue `json:"sensors"`
 	Fans    []idNameValue `json:"fans"`
 }
-
-/*
-type systemResult struct {
-	Mac              string `json:"mac"`
-	FanRPM           int    `json:"fan_rpm"`
-	BoxFlavor        string `json:"box_flavor"`
-	TempCpub         int    `json:"temp_cpub"`
-	TempCpum         int    `json:"temp_cpum"`
-	DiskStatus       string `json:"disk_status"`
-	TempHDD          int    `json:"temp_hdd"`
-	BoardName        string `json:"board_name"`
-	TempSW           int    `json:"temp_sw"`
-	Uptime           string `json:"uptime"`
-	UptimeVal        int    `json:"uptime_val"`
-	UserMainStorage  string `json:"user_main_storage"`
-	BoxAuthenticated bool   `json:"box_authenticated"`
-	Serial           string `json:"serial"`
-	FirmwareVersion  string `json:"firmware_version"`
-}
-*/
-/*
-type system struct {
-	Success   bool         `json:"success"`
-	Result    systemResult `json:"result"`
-	ErrorCode string       `json:"error_code"`
-}
-*/
 
 type system struct {
 	Success bool `json:"success"`
