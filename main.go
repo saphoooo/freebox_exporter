@@ -53,6 +53,12 @@ func main() {
 
 	myPostRequest := newPostRequest()
 
+	myFreeplugRequest := &postRequest{
+		method: "GET",
+		url:    mafreebox + "api/v4/freeplug/",
+		header: "X-Fbx-App-Auth",
+	}
+
 	myLanRequest := &postRequest{
 		method: "GET",
 		url:    mafreebox + "api/v4/lan/browser/pub/",
@@ -89,6 +95,34 @@ func main() {
 					rateDownGauge.Set(float64(getDslResult[1]))
 					snrUpGauge.Set(float64(getDslResult[2]))
 					snrDownGauge.Set(float64(getDslResult[3]))
+				}
+			}
+
+			// freeplug metrics
+			freeplugStats, err := getFreeplug(myAuthInfo, myFreeplugRequest, &mySessionToken)
+			if err != nil {
+				log.Printf("An error occured with freeplug metrics: %v", err)
+			}
+
+			for _, freeplugNetwork := range freeplugStats.Result {
+				for _, freeplugMember := range freeplugNetwork.Members {
+					if freeplugMember.HasNetwork {
+						freeplugHasNetworkGauge.WithLabelValues(freeplugMember.ID).Set(float64(1))
+					} else {
+						freeplugHasNetworkGauge.WithLabelValues(freeplugMember.ID).Set(float64(0))
+					}
+
+					Mb := 1e6
+					rxRate := float64(freeplugMember.RxRate) * Mb
+					txRate := float64(freeplugMember.TxRate) * Mb
+
+					if rxRate >= 0 { // -1 if not unavailable
+						freeplugRxRateGauge.WithLabelValues(freeplugMember.ID).Set(rxRate)
+					}
+
+					if txRate >= 0 { // -1 if not unavailable
+						freeplugTxRateGauge.WithLabelValues(freeplugMember.ID).Set(txRate)
+					}
 				}
 			}
 
