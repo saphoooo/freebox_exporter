@@ -125,12 +125,7 @@ func main() {
 					log.Printf("An error occured with DSL metrics: %v", err)
 				}
 
-				if len(getDslResult) == 0 {
-					rateUpGauge.Set(float64(0))
-					rateDownGauge.Set(float64(0))
-					snrUpGauge.Set(float64(0))
-					snrDownGauge.Set(float64(0))
-				} else {
+				if len(getDslResult) > 0 {
 					rateUpGauge.Set(float64(getDslResult[0]))
 					rateDownGauge.Set(float64(getDslResult[1]))
 					snrUpGauge.Set(float64(getDslResult[2]))
@@ -172,14 +167,7 @@ func main() {
 				log.Printf("An error occured with NET metrics: %v", err)
 			}
 
-			if len(getNetResult) == 0 {
-				bwUpGauge.Set(float64(0))
-				bwDownGauge.Set(float64(0))
-				netRateUpGauge.Set(float64(0))
-				netRateDownGauge.Set(float64(0))
-				vpnRateUpGauge.Set(float64(0))
-				vpnRateDownGauge.Set(float64(0))
-			} else {
+			if len(getNetResult) > 0 {
 				bwUpGauge.Set(float64(getNetResult[0]))
 				bwDownGauge.Set(float64(getNetResult[1]))
 				netRateUpGauge.Set(float64(getNetResult[2]))
