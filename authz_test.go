@@ -13,7 +13,6 @@ import (
 )
 
 func TestRetreiveToken(t *testing.T) {
-
 	ai := &authInfo{
 		myStore: store{location: "/tmp/token"},
 	}

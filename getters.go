@@ -43,7 +43,6 @@ func (l *lan) status() error {
 
 // setFreeboxToken ensure that there is an active token for a call
 func setFreeboxToken(authInf *authInfo, xSessionToken *string) (string, error) {
-
 	token := os.Getenv("FREEBOX_TOKEN")
 
 	if token == "" {
@@ -342,7 +341,6 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 
 // getLan get lan statistics
 func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHost, error) {
-
 	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
 		return []lanHost{}, err
@@ -422,7 +420,6 @@ func getFreeplug(authInf *authInfo, pr *postRequest, xSessionToken *string) (fre
 }
 
 func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (system, error) {
-
 	client := http.Client{}
 	req, err := http.NewRequest(pr.method, pr.url, nil)
 	if err != nil {
