@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
 	"time"
 
@@ -53,6 +54,12 @@ func main() {
 
 	myPostRequest := newPostRequest()
 
+	myConnectionXdslRequest := &postRequest{
+		method: "GET",
+		url:    mafreebox + "api/v4/connection/xdsl/",
+		header: "X-Fbx-App-Auth",
+	}
+
 	myFreeplugRequest := &postRequest{
 		method: "GET",
 		url:    mafreebox + "api/v4/freeplug/",
@@ -76,10 +83,43 @@ func main() {
 	// infinite loop to get all statistics
 	go func() {
 		for {
-			// dsl metrics
 			// There is no DSL metric on fiber Freebox
 			// If you use a fiber Freebox, use -fiber flag to turn off this metric
 			if !fiber {
+				// connectionXdsl metrics
+				connectionXdslStats, err := getConnectionXdsl(myAuthInfo, myConnectionXdslRequest, &mySessionToken)
+				if err != nil {
+					log.Printf("An error occured with connectionXdsl metrics: %v", err)
+				}
+
+				if connectionXdslStats.Success {
+					status := connectionXdslStats.Result.Status
+					result := connectionXdslStats.Result
+					down := result.Down
+					up := result.Up
+
+					connectionXdslStatusUptimeGauge.Set(float64(status.Uptime))
+
+					connectionXdslDownAttnGauge.Set(float64(down.Attn10) / 10)
+					connectionXdslUpAttnGauge.Set(float64(up.Attn10) / 10)
+
+					connectionXdslDownSnrGauge.Set(float64(down.Snr10) / 10)
+					connectionXdslUpSnrGauge.Set(float64(up.Snr10) / 10)
+
+					resultReflect := reflect.ValueOf(result)
+					for _, direction := range []string{"down", "up"} {
+						for _, errorField := range []string{"crc", "es", "fec", "hec", "ses"} {
+							value := reflect.Indirect(resultReflect).
+								FieldByName(strings.Title(direction)).
+								FieldByName(strings.Title(errorField))
+
+							connectionXdslErrorGauges.WithLabelValues(direction, errorField).
+								Set(float64(value.Int()))
+						}
+					}
+				}
+
+				// dsl metrics
 				getDslResult, err := getDsl(myAuthInfo, myPostRequest, &mySessionToken)
 				if err != nil {
 					log.Printf("An error occured with DSL metrics: %v", err)
