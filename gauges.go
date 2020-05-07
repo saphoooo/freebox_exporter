@@ -24,7 +24,7 @@ var (
 		Help: "Download signal/noise ratio (in 1/10 dB)",
 	})
 
-	// RRD freeplug gauges
+	// freeplug gauges
 	freeplugRxRateGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "freebox_freeplug_rx_rate_bits",
 		Help: "rx rate (from the freeplugs to the \"cco\" freeplug) (in bits/s) -1 if not available",
@@ -87,35 +87,6 @@ var (
 		})
 	*/
 
-	// RRD temp gauges
-	// as temp database seems to be broken, this one is not used at this time
-	/*
-		cpumGauge = promauto.NewGauge(prometheus.GaugeOpts{
-			Name: "freebox_temp_cpum_celsius",
-			Help: "Temperature cpum (in °C)",
-		})
-		cpubGauge = promauto.NewGauge(prometheus.GaugeOpts{
-			Name: "freebox_temp_cpub_celsius",
-			Help: "Temperature cpub (in °C)",
-		})
-		swGauge = promauto.NewGauge(prometheus.GaugeOpts{
-			Name: "freebox_temp_sw_celsius",
-			Help: "Temperature sw (in °C)",
-		})
-		hddGauge = promauto.NewGauge(prometheus.GaugeOpts{
-			Name: "freebox_temp_hdd_celsius",
-			Help: "Temperature hdd (in °C)",
-		})
-		fanSpeedGauge = promauto.NewGauge(prometheus.GaugeOpts{
-			Name: "freebox_temp_fan_speed_rpm",
-			Help: "Fan rpm",
-		})
-		firmwareVersionGauge = promauto.NewGauge(prometheus.GaugeOpts{
-			Name: "freebox_firmware_version",
-			Help: "Firmware version",
-		})
-	*/
-
 	// RRD net gauges
 	bwUpGauge = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_net_bw_up_bytes",
@@ -154,22 +125,22 @@ var (
 		},
 	)
 
-	// SYSTEM temp gauges
+	// system temp gauges
 	systemTempGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_system_temp_celsius",
-			Help: "Temp sensors reported by system (in °C)",
+			Help: "Temperature sensors reported by system (in °C)",
 		},
 		[]string{
 			"name",
 		},
 	)
 
-	// SYSTEM fan gauges
+	// system fan gauges
 	systemFanGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_system_fan_rpm",
-			Help: "Fan speed reported by system (in rpm)",
+			Help: "Fan speed reported by system (in RPM)",
 		},
 		[]string{
 			"name",

@@ -17,12 +17,6 @@ import (
 
 // storeToken stores app_token in ~/.freebox_token
 func storeToken(token string, authInf *authInfo) error {
-	/*
-		if token == "" {
-			return errors.New("token should not be blank")
-		}
-	*/
-
 	err := os.Setenv("FREEBOX_TOKEN", token)
 	if err != nil {
 		return err
@@ -58,10 +52,8 @@ func retreiveToken(authInf *authInfo) (string, error) {
 // getTrackID is the initial request to freebox API
 // get app_token and track_id
 func getTrackID(authInf *authInfo) (*track, error) {
-
 	req, _ := json.Marshal(authInf.myApp)
 	buf := bytes.NewReader(req)
-	//resp, err := http.Post(mafreebox+"api/"+version+"/login/authorize/", "application/json", buf)
 	resp, err := http.Post(authInf.myAPI.authz, "application/json", buf)
 	if err != nil {
 		return nil, err
@@ -133,7 +125,6 @@ func getGranted(authInf *authInfo) error {
 
 // getChallenge makes sure the app always has a valid challenge
 func getChallenge(authInf *authInfo) (*challenge, error) {
-	//resp, err := http.Get(mafreebox + "api/" + version + "/login/")
 	resp, err := http.Get(authInf.myAPI.login)
 	if err != nil {
 		return nil, err
@@ -154,7 +145,6 @@ func getChallenge(authInf *authInfo) (*challenge, error) {
 
 // hmacSha1 encodes app_token in hmac-sha1 and stores it in password
 func hmacSha1(appToken, challenge string) string {
-
 	hash := hmac.New(sha1.New, []byte(appToken))
 	hash.Write([]byte(challenge))
 	return hex.EncodeToString(hash.Sum(nil))
@@ -220,12 +210,11 @@ func getToken(authInf *authInfo, xSessionToken *string) (string, error) {
 
 // getSessToken gets a new token session when the old one has expired
 func getSessToken(token string, authInf *authInfo, xSessionToken *string) (string, error) {
-
-	challenged, err := getChallenge(authInf)
+	challenge, err := getChallenge(authInf)
 	if err != nil {
 		return "", err
 	}
-	password := hmacSha1(token, challenged.Result.Challenge)
+	password := hmacSha1(token, challenge.Result.Challenge)
 	t, err := getSession(authInf, password)
 	if err != nil {
 		return "", err
