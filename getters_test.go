@@ -92,7 +92,7 @@ func TestGetDsl(t *testing.T) {
 				Success: true,
 			}
 			myRRD.Result.Data = []map[string]int{
-				map[string]int{
+				{
 					"rate_up":   12,
 					"rate_down": 34,
 					"snr_up":    56,
@@ -179,7 +179,7 @@ func TestGetTemp(t *testing.T) {
 				Success: true,
 			}
 			myRRD.Result.Data = []map[string]int{
-				map[string]int{
+				{
 					"cpum":      01,
 					"cpub":      02,
 					"sw":        03,
@@ -267,7 +267,7 @@ func TestGetNet(t *testing.T) {
 				Success: true,
 			}
 			myRRD.Result.Data = []map[string]int{
-				map[string]int{
+				{
 					"bw_up":         01,
 					"bw_down":       02,
 					"rate_up":       03,
@@ -356,7 +356,7 @@ func TestGetSwitch(t *testing.T) {
 				Success: true,
 			}
 			myRRD.Result.Data = []map[string]int{
-				map[string]int{
+				{
 					"rx_1": 01,
 					"tx_1": 11,
 					"rx_2": 02,
@@ -447,11 +447,11 @@ func TestGetLan(t *testing.T) {
 				Success: true,
 			}
 			myLan.Result = []lanHost{
-				lanHost{
+				{
 					Reachable:   true,
 					PrimaryName: "Reachable host",
 				},
-				lanHost{
+				{
 					Reachable:   false,
 					PrimaryName: "Unreachable host",
 				},
