@@ -6,6 +6,37 @@ import (
 )
 
 var (
+	// XXX: see https://prometheus.io/docs/practices/naming/ for metric names
+
+	// connectionXdsl gauges
+	connectionXdslStatusUptimeGauge = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "freebox_connection_xdsl_status_uptime_seconds_total",
+	})
+
+	connectionXdslDownAttnGauge = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "freebox_connection_xdsl_down_attn_decibels",
+	})
+	connectionXdslUpAttnGauge = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "freebox_connection_xdsl_up_attn_decibels",
+	})
+	connectionXdslDownSnrGauge = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "freebox_connection_xdsl_down_snr_decibels",
+	})
+	connectionXdslUpSnrGauge = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "freebox_connection_xdsl_up_snr_decibels",
+	})
+
+	connectionXdslErrorGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_connection_xdsl_errors_total",
+			Help: "Error counts",
+		},
+		[]string{
+			"direction", // up|down
+			"name",      // crc|es|fec|hec
+		},
+	)
+
 	// RRD dsl gauges
 	rateUpGauge = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",

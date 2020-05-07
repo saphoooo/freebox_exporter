@@ -65,6 +65,54 @@ type rrd struct {
 	ErrorCode string `json:"error_code"`
 }
 
+type connectionXdsl struct {
+	Success bool `json:"success"`
+	Result  struct {
+		Status struct {
+			Status     string `json:"status"`
+			Protocol   string `json:"protocol"`
+			Uptime     int    `json:"uptime"`
+			Modulation string `json:"modulation"`
+		} `json:"status"`
+		Down struct {
+			Es         int  `json:"es"`
+			Phyr       bool `json:"phyr"`
+			Attn       int  `json:"attn"`
+			Attn10     int  `json:"attn_10"`
+			Snr        int  `json:"snr"`
+			Snr10      int  `json:"snr_10"`
+			Nitro      bool `json:"nitro"`
+			Rate       int  `json:"rate"`
+			Hec        int  `json:"hec"`
+			Crc        int  `json:"crc"`
+			RxmtUncorr int  `json:"rxmt_uncorr"`
+			RxmtCorr   int  `json:"rxmt_corr"`
+			Ses        int  `json:"ses"`
+			Fec        int  `json:"fec"`
+			Maxrate    int  `json:"maxrate"`
+			Rxmt       int  `json:"rxmt"`
+		} `json:"down"`
+		Up struct {
+			Es         int  `json:"es"`
+			Phyr       bool `json:"phyr"`
+			Attn       int  `json:"attn"`
+			Attn10     int  `json:"attn_10"`
+			Snr        int  `json:"snr"`
+			Snr10      int  `json:"snr_10"`
+			Nitro      bool `json:"nitro"`
+			Rate       int  `json:"rate"`
+			Hec        int  `json:"hec"`
+			Crc        int  `json:"crc"`
+			RxmtUncorr int  `json:"rxmt_uncorr"`
+			RxmtCorr   int  `json:"rxmt_corr"`
+			Ses        int  `json:"ses"`
+			Fec        int  `json:"fec"`
+			Maxrate    int  `json:"maxrate"`
+			Rxmt       int  `json:"rxmt"`
+		} `json:"up"`
+	}
+}
+
 type database struct {
 	DB        string   `json:"db"`
 	DateStart int      `json:"date_start,omitempty"`

@@ -75,6 +75,37 @@ func newPostRequest() *postRequest {
 	}
 }
 
+func getConnectionXdsl(authInf *authInfo, pr *postRequest, xSessionToken *string) (connectionXdsl, error) {
+	client := http.Client{}
+	req, err := http.NewRequest(pr.method, pr.url, nil)
+	if err != nil {
+		return connectionXdsl{}, err
+	}
+	req.Header.Add(pr.header, *xSessionToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return connectionXdsl{}, err
+	}
+	if resp.StatusCode == 404 {
+		return connectionXdsl{}, errors.New(resp.Status)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return connectionXdsl{}, err
+	}
+
+	connectionXdslResp := connectionXdsl{}
+	err = json.Unmarshal(body, &connectionXdslResp)
+	if err != nil {
+		if debug {
+			log.Println(string(body))
+		}
+		return connectionXdsl{}, err
+	}
+
+	return connectionXdslResp, nil
+}
+
 // getDsl get dsl statistics
 func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, error) {
 	d := &database{
