@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/iancoleman/strcase"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -98,7 +100,7 @@ func main() {
 					down := result.Down
 					up := result.Up
 
-					connectionXdslStatusUptimeGauge.
+					connectionXdslStatusUptimeGauges.
 						WithLabelValues(status.Status, status.Protocol, status.Modulation).
 						Set(float64(status.Uptime))
 
@@ -108,17 +110,21 @@ func main() {
 					connectionXdslDownSnrGauge.Set(float64(down.Snr10) / 10)
 					connectionXdslUpSnrGauge.Set(float64(up.Snr10) / 10)
 
-					resultReflect := reflect.ValueOf(result)
-					for _, direction := range []string{"down", "up"} {
-						for _, errorField := range []string{"crc", "es", "fec", "hec", "ses"} {
-							value := reflect.Indirect(resultReflect).
-								FieldByName(strings.Title(direction)).
-								FieldByName(strings.Title(errorField))
+					connectionXdslNitroGauges.WithLabelValues("down").
+						Set(bool2float(down.Nitro))
+					connectionXdslNitroGauges.WithLabelValues("up").
+						Set(bool2float(up.Nitro))
 
-							connectionXdslErrorGauges.WithLabelValues(direction, errorField).
-								Set(float64(value.Int()))
-						}
-					}
+					connectionXdslGinpGauges.WithLabelValues("down", "enabled").
+						Set(bool2float(down.Ginp))
+					connectionXdslGinpGauges.WithLabelValues("up", "enabled").
+						Set(bool2float(up.Ginp))
+
+					logFields(result, connectionXdslGinpGauges,
+						[]string{"rtx_tx", "rtx_c", "rtx_uc"})
+
+					logFields(result, connectionXdslErrorGauges,
+						[]string{"crc", "es", "fec", "hec", "ses"})
 				}
 
 				// dsl metrics
@@ -211,4 +217,32 @@ func main() {
 	log.Println("freebox_exporter started on port", listen)
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(listen, nil))
+}
+
+func logFields(result interface{}, gauge *prometheus.GaugeVec, fields []string) error {
+	resultReflect := reflect.ValueOf(result)
+
+	for _, direction := range []string{"down", "up"} {
+		for _, field := range fields {
+			value := reflect.Indirect(resultReflect).
+				FieldByName(strcase.ToCamel(direction)).
+				FieldByName(strcase.ToCamel(field))
+
+			if value.IsZero() {
+				continue
+			}
+
+			gauge.WithLabelValues(direction, field).
+				Set(float64(value.Int()))
+		}
+	}
+
+	return nil
+}
+
+func bool2float(b bool) float64 {
+	if b {
+		return 1
+	}
+	return 0
 }

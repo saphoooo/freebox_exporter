@@ -70,45 +70,53 @@ type connectionXdsl struct {
 	Result  struct {
 		Status struct {
 			Status     string `json:"status"`
+			Modulation string `json:"modulation"`
 			Protocol   string `json:"protocol"`
 			Uptime     int    `json:"uptime"`
-			Modulation string `json:"modulation"`
 		} `json:"status"`
 		Down struct {
-			Es         int  `json:"es"`
-			Phyr       bool `json:"phyr"`
 			Attn       int  `json:"attn"`
 			Attn10     int  `json:"attn_10"`
+			Crc        int  `json:"crc"`
+			Es         int  `json:"es"`
+			Fec        int  `json:"fec"`
+			Ginp       bool `json:"ginp"`
+			Hec        int  `json:"hec"`
+			Maxrate    int  `json:"maxrate"`
+			Nitro      bool `json:"nitro"`
+			Phyr       bool `json:"phyr"`
+			Rate       int  `json:"rate"`
+			RtxC       int  `json:"rtx_c,omitempty"`
+			RtxTx      int  `json:"rtx_tx,omitempty"`
+			RtxUc      int  `json:"rtx_uc,omitempty"`
+			Rxmt       int  `json:"rxmt"`
+			RxmtCorr   int  `json:"rxmt_corr"`
+			RxmtUncorr int  `json:"rxmt_uncorr"`
+			Ses        int  `json:"ses"`
 			Snr        int  `json:"snr"`
 			Snr10      int  `json:"snr_10"`
-			Nitro      bool `json:"nitro"`
-			Rate       int  `json:"rate"`
-			Hec        int  `json:"hec"`
-			Crc        int  `json:"crc"`
-			RxmtUncorr int  `json:"rxmt_uncorr"`
-			RxmtCorr   int  `json:"rxmt_corr"`
-			Ses        int  `json:"ses"`
-			Fec        int  `json:"fec"`
-			Maxrate    int  `json:"maxrate"`
-			Rxmt       int  `json:"rxmt"`
 		} `json:"down"`
 		Up struct {
-			Es         int  `json:"es"`
-			Phyr       bool `json:"phyr"`
 			Attn       int  `json:"attn"`
 			Attn10     int  `json:"attn_10"`
+			Crc        int  `json:"crc"`
+			Es         int  `json:"es"`
+			Fec        int  `json:"fec"`
+			Ginp       bool `json:"ginp"`
+			Hec        int  `json:"hec"`
+			Maxrate    int  `json:"maxrate"`
+			Nitro      bool `json:"nitro"`
+			Phyr       bool `json:"phyr"`
+			Rate       int  `json:"rate"`
+			RtxC       int  `json:"rtx_c,omitempty"`
+			RtxTx      int  `json:"rtx_tx,omitempty"`
+			RtxUc      int  `json:"rtx_uc,omitempty"`
+			Rxmt       int  `json:"rxmt"`
+			RxmtCorr   int  `json:"rxmt_corr"`
+			RxmtUncorr int  `json:"rxmt_uncorr"`
+			Ses        int  `json:"ses"`
 			Snr        int  `json:"snr"`
 			Snr10      int  `json:"snr_10"`
-			Nitro      bool `json:"nitro"`
-			Rate       int  `json:"rate"`
-			Hec        int  `json:"hec"`
-			Crc        int  `json:"crc"`
-			RxmtUncorr int  `json:"rxmt_uncorr"`
-			RxmtCorr   int  `json:"rxmt_corr"`
-			Ses        int  `json:"ses"`
-			Fec        int  `json:"fec"`
-			Maxrate    int  `json:"maxrate"`
-			Rxmt       int  `json:"rxmt"`
 		} `json:"up"`
 	}
 }

@@ -10,7 +10,7 @@ var (
 	// XXX: see https://prometheus.io/docs/practices/naming/ for metric names
 
 	// connectionXdsl gauges
-	connectionXdslStatusUptimeGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	connectionXdslStatusUptimeGauges = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "freebox_connection_xdsl_status_uptime_seconds_total",
 	},
 		[]string{
@@ -41,6 +41,25 @@ var (
 		[]string{
 			"direction", // up|down
 			"name",      // crc|es|fec|hec
+		},
+	)
+
+	connectionXdslGinpGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_connection_xdsl_ginp",
+		},
+		[]string{
+			"direction", // up|down
+			"name",      // enabled|rtx_(tx|c|uc)
+		},
+	)
+
+	connectionXdslNitroGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_connection_xdsl_nitro",
+		},
+		[]string{
+			"direction", // up|down
 		},
 	)
 
