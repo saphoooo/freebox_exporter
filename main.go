@@ -98,7 +98,9 @@ func main() {
 					down := result.Down
 					up := result.Up
 
-					connectionXdslStatusUptimeGauge.Set(float64(status.Uptime))
+					connectionXdslStatusUptimeGauge.
+						WithLabelValues(status.Status, status.Protocol, status.Modulation).
+						Set(float64(status.Uptime))
 
 					connectionXdslDownAttnGauge.Set(float64(down.Attn10) / 10)
 					connectionXdslUpAttnGauge.Set(float64(up.Attn10) / 10)

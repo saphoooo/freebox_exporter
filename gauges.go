@@ -6,12 +6,19 @@ import (
 )
 
 var (
+	// XXX: see https://dev.freebox.fr/sdk/os/ for API documentation
 	// XXX: see https://prometheus.io/docs/practices/naming/ for metric names
 
 	// connectionXdsl gauges
-	connectionXdslStatusUptimeGauge = promauto.NewGauge(prometheus.GaugeOpts{
+	connectionXdslStatusUptimeGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "freebox_connection_xdsl_status_uptime_seconds_total",
-	})
+	},
+		[]string{
+			"status",
+			"protocol",
+			"modulation",
+		},
+	)
 
 	connectionXdslDownAttnGauge = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_connection_xdsl_down_attn_decibels",
