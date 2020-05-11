@@ -1,4 +1,5 @@
 # freebox_exporter
+
 A prometheus exporter for freebox stats
 
 ## Cmds
@@ -18,7 +19,7 @@ Here's what you can get in Prometheus / Grafana with freebox_exporter:
 
 ![Preview](https://user-images.githubusercontent.com/13923756/54585380-33318800-4a1a-11e9-8e9d-e434f275755c.png)
 
-# how to use it
+# How to use it
 
 ## Compiled binary
 
@@ -26,13 +27,13 @@ If you want to compile the binary, you can refer to [this document](https://gist
 
 You can also find the compiled binairies for MacOS, Linux (x86_64, arm64 and arm) and Windows in the release tab.
 
-### Quickstart
+### Quick start
 
 ```
 ./freebox_exporter
 ```
 
-### The following parameters are optional and can be superseed:
+### The following parameters are optional and can be overridden:
 
 - Freebox API endpoint
 
@@ -46,16 +47,16 @@ You can also find the compiled binairies for MacOS, Linux (x86_64, arm64 and arm
 ./freebox_exporter -listen ":10001"
 ```
 
-## Docker 
+## Docker
 
-### Quickstart
-  
+### Quick start
+
 ```
 docker run -d --name freebox-exporter --restart on-failure  -p 10001:10001 \
   saphoooo/freebox-exporter
 ```
 
-### The following parameters are optional and can be superseed:
+### The following parameters are optional and can be overridden:
 
 - Local token
 
@@ -81,9 +82,10 @@ docker run -d --name freebox-exporter --restart on-failure -p 8080:10001 \
 ```
 
 ## Caution on first run
+
 If you launch the application for the first time, you must allow it to access the freebox API.
 - The application must be launched from the local network.
 - You have to authorize the application from the freebox front panel.
 - You have to modify the rights of the application to give it "Modification des réglages de la Freebox"
-  
+
 Source: https://dev.freebox.fr/sdk/os/
