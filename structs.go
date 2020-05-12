@@ -170,11 +170,6 @@ type idNameValue struct {
 	Value int    `json:"value,omitempty"`
 }
 
-type systemR struct {
-	Sensors []idNameValue `json:"sensors"`
-	Fans    []idNameValue `json:"fans"`
-}
-
 type system struct {
 	Success bool `json:"success"`
 	Result  struct {

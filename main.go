@@ -205,9 +205,13 @@ func main() {
 
 			systemTempGauges.WithLabelValues("Température CPU B").Set(float64(systemStats.Result.TempCpub))
 			systemTempGauges.WithLabelValues("Température CPU M").Set(float64(systemStats.Result.TempCpum))
-			systemTempGauges.WithLabelValues("Disque dur").Set(float64(systemStats.Result.TempHDD))
 			systemTempGauges.WithLabelValues("Température Switch").Set(float64(systemStats.Result.TempSW))
+			systemTempGauges.WithLabelValues("Disque dur").Set(float64(systemStats.Result.TempHDD))
 			systemFanGauges.WithLabelValues("Ventilateur 1").Set(float64(systemStats.Result.FanRPM))
+
+			systemUptimeGauges.
+				WithLabelValues(systemStats.Result.FirmwareVersion).
+				Set(float64(systemStats.Result.UptimeVal))
 
 			time.Sleep(10 * time.Second)
 		}

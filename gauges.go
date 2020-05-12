@@ -203,4 +203,14 @@ var (
 			"name",
 		},
 	)
+
+	// system uptime gauges
+	systemUptimeGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_system_uptime_seconds_total",
+		},
+		[]string{
+			"firmware_version",
+		},
+	)
 )
