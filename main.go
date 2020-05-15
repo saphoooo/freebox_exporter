@@ -107,8 +107,14 @@ func main() {
 					connectionXdslDownAttnGauge.Set(float64(down.Attn10) / 10)
 					connectionXdslUpAttnGauge.Set(float64(up.Attn10) / 10)
 
-					connectionXdslDownSnrGauge.Set(float64(down.Snr10) / 10)
-					connectionXdslUpSnrGauge.Set(float64(up.Snr10) / 10)
+					// XXX: sometimes the Freebox is reporting zero as SNR which
+					// does not make sense so we don't log these
+					if down.Snr10 > 0 {
+						connectionXdslDownSnrGauge.Set(float64(down.Snr10) / 10)
+					}
+					if up.Snr10 > 0 {
+						connectionXdslUpSnrGauge.Set(float64(up.Snr10) / 10)
+					}
 
 					connectionXdslNitroGauges.WithLabelValues("down").
 						Set(bool2float(down.Nitro))
