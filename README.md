@@ -1,6 +1,6 @@
 # freebox_exporter
 
-A prometheus exporter for freebox stats
+A Prometheus exporter for Freebox stats
 
 ## Cmds
 
@@ -8,8 +8,8 @@ A prometheus exporter for freebox stats
 
 ## Flags
 
-- `-endpoint`: freebox API url (default http://mafreebox.freebox.fr)
-- `-listen`: port for prometheus metrics (default :10001)
+- `-endpoint`: Freebox API url (default http://mafreebox.freebox.fr)
+- `-listen`: port for Prometheus metrics (default :10001)
 - `-debug`: turn on debug mode
 - `-fiber`: turn off DSL metric for fiber Freebox
 
@@ -23,9 +23,9 @@ Here's what you can get in Prometheus / Grafana with freebox_exporter:
 
 ## Compiled binary
 
-If you want to compile the binary, you can refer to [this document](https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63) which explains how to do it, depending on your OS and architecture.
+If you want to compile the binary, you can refer to [this document](https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63) which explains how to do it, depending on your OS and architecture. Alternatively, you can use `./build.sh`.
 
-You can also find the compiled binairies for MacOS, Linux (x86_64, arm64 and arm) and Windows in the release tab.
+You can also find the compiled binaries for MacOS, Linux (x86_64, arm64 and arm) and Windows in the release tab.
 
 ### Quick start
 
