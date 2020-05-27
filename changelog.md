@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased] - 2020-05-27
+## [1.2] - 2020-05-27
 
 - Add build script
 - Log Freebox Server uptime and firmware version
