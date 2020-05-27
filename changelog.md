@@ -1,5 +1,21 @@
 # Changelog
 
+## [unreleased] - 2020-??-??
+
+- Add build script
+- Log Freebox Server uptime and firmware version
+- Log G.INP data
+- Log connection status, protocol and modulation
+- Log XDSL stats
+- Don't log incorrect values (previously logged as zero)
+- Remove dead code
+
+## [1.1.9] - 2020-04-24
+
+- Log freeplug speeds and connectivity
+- Go 1.14
+- Remove Godeps and vendored files
+
 ## [1.1.7] - 2019-09-04
 
 - Go 1.13
