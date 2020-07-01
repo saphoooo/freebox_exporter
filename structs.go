@@ -191,6 +191,34 @@ type system struct {
 	}
 }
 
+type wifiAccessPoint struct {
+	Name string `json:"name,omitempty"`
+	ID   int    `json:"id,omitempty"`
+}
+
+type wifi struct {
+	Success bool              `json:"success"`
+	Result  []wifiAccessPoint `json:"result,omitempty"`
+}
+
+type wifiStation struct {
+	Hostname           string `json:"hostname,omitempty"`
+	MAC                string `json:"mac,omitempty"`
+	State              string `json:"state,omitempty"`
+	Inactive           int    `json:"inactive,omitempty"`
+	RXBytes            int    `json:"rx_bytes,omitempty"`
+	TXBytes            int    `json:"tx_bytes,omitempty"`
+	ConnectionDuration int    `json:"conn_duration,omitempty"`
+	TXRate             int    `json:"tx_rate,omitempty"`
+	RXRate             int    `json:"rx_rate,omitempty"`
+	Signal             int    `json:"signal,omitempty"`
+}
+
+type wifiStations struct {
+	Success bool          `json:"success"`
+	Result  []wifiStation `json:"result,omitempty"`
+}
+
 type app struct {
 	AppID      string `json:"app_id"`
 	AppName    string `json:"app_name"`

@@ -569,3 +569,130 @@ func TestGetSystem(t *testing.T) {
 	}
 
 }
+
+func TestGetWifi(t *testing.T) {
+	os.Setenv("FREEBOX_TOKEN", "IOI")
+	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		myWifi := wifi{
+			Success: true,
+		}
+		myAP := wifiAccessPoint{
+			Name: "AP1",
+			ID:   0,
+		}
+		myWifi.Result = []wifiAccessPoint{myAP}
+
+		result, _ := json.Marshal(myWifi)
+		fmt.Fprintln(w, string(result))
+	}))
+	defer ts.Close()
+
+	pr := &postRequest{
+		method: "GET",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL,
+	}
+
+	ai := &authInfo{}
+	mySessionToken := "foobar"
+
+	wifiStats, err := getWifi(ai, pr, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+
+	if wifiStats.Result[0].Name != "AP1" {
+		t.Error("Expected AP1, but got", wifiStats.Result[0].Name)
+	}
+
+	if wifiStats.Result[0].ID != 0 {
+		t.Error("Expected 0, but got", wifiStats.Result[0].ID)
+	}
+
+}
+
+func TestGetWifiStations(t *testing.T) {
+	os.Setenv("FREEBOX_TOKEN", "IOI")
+	defer os.Unsetenv("FREEBOX_TOKEN")
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		myWifiStations := wifiStations{
+			Success: true,
+		}
+
+		myStation := wifiStation{
+			Hostname:           "station_host",
+			MAC:                "AA:BB:CC:DD:EE:FF",
+			State:              "authorized",
+			Inactive:           60,
+			RXBytes:            500,
+			TXBytes:            10000,
+			ConnectionDuration: 600,
+			TXRate:             20,
+			RXRate:             5,
+			Signal:             -20,
+		}
+		myWifiStations.Result = []wifiStation{myStation}
+
+		result, _ := json.Marshal(myWifiStations)
+		fmt.Fprintln(w, string(result))
+	}))
+	defer ts.Close()
+
+	pr := &postRequest{
+		method: "GET",
+		header: "X-Fbx-App-Auth",
+		url:    ts.URL,
+	}
+
+	ai := &authInfo{}
+	mySessionToken := "foobar"
+
+	wifiStationsStats, err := getWifiStations(ai, pr, &mySessionToken)
+	if err != nil {
+		t.Error("Expected no err, but got", err)
+	}
+
+	if wifiStationsStats.Result[0].Hostname != "station_host" {
+		t.Error("Expected station_host, but got", wifiStationsStats.Result[0].Hostname)
+	}
+
+	if wifiStationsStats.Result[0].MAC != "AA:BB:CC:DD:EE:FF" {
+		t.Error("Expected AA:BB:CC:DD:EE:FF, but got", wifiStationsStats.Result[0].MAC)
+	}
+
+	if wifiStationsStats.Result[0].State != "authorized" {
+		t.Error("Expected authorized, but got", wifiStationsStats.Result[0].State)
+	}
+
+	if wifiStationsStats.Result[0].Inactive != 60 {
+		t.Error("Expected 60, but got", wifiStationsStats.Result[0].Inactive)
+	}
+
+	if wifiStationsStats.Result[0].RXBytes != 500 {
+		t.Error("Expected 500, but got", wifiStationsStats.Result[0].RXBytes)
+	}
+
+	if wifiStationsStats.Result[0].TXBytes != 10000 {
+		t.Error("Expected 10000, but got", wifiStationsStats.Result[0].TXBytes)
+	}
+
+	if wifiStationsStats.Result[0].ConnectionDuration != 600 {
+		t.Error("Expected 600, but got", wifiStationsStats.Result[0].ConnectionDuration)
+	}
+
+	if wifiStationsStats.Result[0].TXRate != 20 {
+		t.Error("Expected 20, but got", wifiStationsStats.Result[0].TXRate)
+	}
+
+	if wifiStationsStats.Result[0].RXRate != 5 {
+		t.Error("Expected 5, but got", wifiStationsStats.Result[0].RXRate)
+	}
+
+	if wifiStationsStats.Result[0].Signal != -20 {
+		t.Error("Expected -20, but got", wifiStationsStats.Result[0].Signal)
+	}
+
+}
