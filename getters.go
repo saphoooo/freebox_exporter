@@ -480,3 +480,65 @@ func getSystem(authInf *authInfo, pr *postRequest, xSessionToken *string) (syste
 
 	return systemResp, nil
 }
+
+func getWifi(authInf *authInfo, pr *postRequest, xSessionToken *string) (wifi, error) {
+	client := http.Client{}
+	req, err := http.NewRequest(pr.method, pr.url, nil)
+	if err != nil {
+		return wifi{}, err
+	}
+	req.Header.Add(pr.header, *xSessionToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return wifi{}, err
+	}
+	if resp.StatusCode == 404 {
+		return wifi{}, errors.New(resp.Status)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return wifi{}, err
+	}
+
+	wifiResp := wifi{}
+	err = json.Unmarshal(body, &wifiResp)
+	if err != nil {
+		if debug {
+			log.Println(string(body))
+		}
+		return wifi{}, err
+	}
+
+	return wifiResp, nil
+}
+
+func getWifiStations(authInf *authInfo, pr *postRequest, xSessionToken *string) (wifiStations, error) {
+	client := http.Client{}
+	req, err := http.NewRequest(pr.method, pr.url, nil)
+	if err != nil {
+		return wifiStations{}, err
+	}
+	req.Header.Add(pr.header, *xSessionToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return wifiStations{}, err
+	}
+	if resp.StatusCode == 404 {
+		return wifiStations{}, errors.New(resp.Status)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return wifiStations{}, err
+	}
+
+	wifiStationResp := wifiStations{}
+	err = json.Unmarshal(body, &wifiStationResp)
+	if err != nil {
+		if debug {
+			log.Println(string(body))
+		}
+		return wifiStations{}, err
+	}
+
+	return wifiStationResp, nil
+}

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -77,6 +78,12 @@ func main() {
 	mySystemRequest := &postRequest{
 		method: "GET",
 		url:    mafreebox + "api/v4/system/",
+		header: "X-Fbx-App-Auth",
+	}
+
+	myWifiRequest := &postRequest{
+		method: "GET",
+		url:    mafreebox + "api/v2/wifi/ap/",
 		header: "X-Fbx-App-Auth",
 	}
 
@@ -218,6 +225,32 @@ func main() {
 			systemUptimeGauges.
 				WithLabelValues(systemStats.Result.FirmwareVersion).
 				Set(float64(systemStats.Result.UptimeVal))
+
+			// wifi metrics
+			wifiStats, err := getWifi(myAuthInfo, myWifiRequest, &mySessionToken)
+			if err != nil {
+				log.Printf("An error occured with Wifi metrics: %v", err)
+			}
+			for _, accessPoint := range wifiStats.Result {
+				myWifiStationRequest := &postRequest{
+					method: "GET",
+					url:    mafreebox + "api/v2/wifi/ap/" + strconv.Itoa(accessPoint.ID) + "/stations",
+					header: "X-Fbx-App-Auth",
+				}
+				wifiStationsStats, err := getWifiStations(myAuthInfo, myWifiStationRequest, &mySessionToken)
+				if err != nil {
+					log.Printf("An error occured with Wifi station metrics: %v", err)
+				}
+				for _, station := range wifiStationsStats.Result {
+					wifiSignalGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.Signal))
+					wifiInactiveGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.Inactive))
+					wifiConnectionDurationGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.ConnectionDuration))
+					wifiRXBytesGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.RXBytes))
+					wifiTXBytesGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.TXBytes))
+					wifiRXRateGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.RXRate))
+					wifiTXRateGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.TXRate))
+				}
+			}
 
 			time.Sleep(10 * time.Second)
 		}

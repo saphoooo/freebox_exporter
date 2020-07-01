@@ -213,4 +213,74 @@ var (
 			"firmware_version",
 		},
 	)
+
+	// wifi station labels
+	wifiLabels = []string{
+		"access_point",
+		"hostname",
+		"state",
+	}
+
+	// wifi station signal gauges
+	wifiSignalGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_wifi_signal_attenuation_db",
+			Help: "Wifi signal attenuation in decibel",
+		},
+		wifiLabels,
+	)
+
+	// wifi station inactive gauges
+	wifiInactiveGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_wifi_inactive_duration_seconds",
+			Help: "Wifi inactive duration in seconds",
+		},
+		wifiLabels,
+	)
+
+	// wifi station conn_duration gauges
+	wifiConnectionDurationGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_wifi_connection_duration_seconds",
+			Help: "Wifi connection duration in seconds",
+		},
+		wifiLabels,
+	)
+
+	// wifi station rx_bytes gauges
+	wifiRXBytesGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_wifi_rx_bytes",
+			Help: "Wifi received data (from station to Freebox) in bytes",
+		},
+		wifiLabels,
+	)
+
+	// wifi station tx_bytes gauges
+	wifiTXBytesGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_wifi_tx_bytes",
+			Help: "Wifi transmitted data (from Freebox to station) in bytes",
+		},
+		wifiLabels,
+	)
+
+	// wifi station rx_rate gauges
+	wifiRXRateGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_wifi_rx_rate",
+			Help: "Wifi reception data rate (from station to Freebox) in bytes/seconds",
+		},
+		wifiLabels,
+	)
+
+	// wifi station rx_rate gauges
+	wifiTXRateGauges = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "freebox_wifi_tx_rate",
+			Help: "Wifi transmission data rate (from Freebox to station) in bytes/seconds",
+		},
+		wifiLabels,
+	)
 )
