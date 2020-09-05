@@ -65,6 +65,7 @@ type rrd struct {
 	ErrorCode string `json:"error_code"`
 }
 
+// https://dev.freebox.fr/sdk/os/connection/
 type connectionXdsl struct {
 	Success bool `json:"success"`
 	Result  struct {
@@ -82,7 +83,7 @@ type connectionXdsl struct {
 			Fec        int  `json:"fec"`
 			Ginp       bool `json:"ginp"`
 			Hec        int  `json:"hec"`
-			Maxrate    int  `json:"maxrate"`
+			Maxrate    uint64  `json:"maxrate"`
 			Nitro      bool `json:"nitro"`
 			Phyr       bool `json:"phyr"`
 			Rate       int  `json:"rate"`
@@ -104,10 +105,10 @@ type connectionXdsl struct {
 			Fec        int  `json:"fec"`
 			Ginp       bool `json:"ginp"`
 			Hec        int  `json:"hec"`
-			Maxrate    int  `json:"maxrate"`
+			Maxrate    uint64  `json:"maxrate"`
 			Nitro      bool `json:"nitro"`
 			Phyr       bool `json:"phyr"`
-			Rate       int  `json:"rate"`
+			Rate       uint64  `json:"rate"`
 			RtxC       int  `json:"rtx_c,omitempty"`
 			RtxTx      int  `json:"rtx_tx,omitempty"`
 			RtxUc      int  `json:"rtx_uc,omitempty"`
@@ -129,6 +130,7 @@ type database struct {
 	Fields    []string `json:"fields"`
 }
 
+// https://dev.freebox.fr/sdk/os/freeplug/
 type freeplug struct {
 	Success bool              `json:"success"`
 	Result  []freeplugNetwork `json:"result"`
@@ -153,6 +155,7 @@ type freeplugMember struct {
 	TxRate        int    `json:"tx_rate"`
 }
 
+// https://dev.freebox.fr/sdk/os/lan/
 type lanHost struct {
 	Reachable   bool   `json:"reachable,omitempty"`
 	PrimaryName string `json:"primary_name,omitempty"`
@@ -170,6 +173,7 @@ type idNameValue struct {
 	Value int    `json:"value,omitempty"`
 }
 
+// https://dev.freebox.fr/sdk/os/system/
 type system struct {
 	Success bool `json:"success"`
 	Result  struct {
@@ -191,6 +195,7 @@ type system struct {
 	}
 }
 
+// https://dev.freebox.fr/sdk/os/wifi/
 type wifiAccessPoint struct {
 	Name string `json:"name,omitempty"`
 	ID   int    `json:"id,omitempty"`
