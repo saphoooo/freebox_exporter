@@ -275,6 +275,9 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		return []int{}, err
 	}
 	rrdTest := rrd{}
+	// debug
+	fmt.Println(body)
+	// end debug
 	err = json.Unmarshal(body, &rrdTest)
 	if err != nil {
 		if debug {
