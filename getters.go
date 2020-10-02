@@ -107,7 +107,7 @@ func getConnectionXdsl(authInf *authInfo, pr *postRequest, xSessionToken *string
 }
 
 // getDsl get dsl statistics
-func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, error) {
+func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]uint64, error) {
 	d := &database{
 		DB:        "dsl",
 		Fields:    []string{"rate_up", "rate_down", "snr_up", "snr_down"},
@@ -117,29 +117,29 @@ func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 
 	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	client := http.Client{}
 	r, err := json.Marshal(*d)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	buf := bytes.NewReader(r)
 	req, err := http.NewRequest(pr.method, pr.url, buf)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	if resp.StatusCode == 404 {
-		return []int{}, errors.New(resp.Status)
+		return []uint64{}, errors.New(resp.Status)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
@@ -147,13 +147,13 @@ func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		if debug {
 			log.Println(string(body))
 		}
-		return []int{}, err
+		return []uint64{}, err
 	}
 
 	if rrdTest.ErrorCode == "auth_required" {
 		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
-			return []int{}, err
+			return []uint64{}, err
 		}
 	}
 
@@ -161,19 +161,19 @@ func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getDsl")
 		}
-		return []int{}, rrdTest.status()
+		return []uint64{}, rrdTest.status()
 	}
 
 	if len(rrdTest.Result.Data) == 0 {
-		return []int{}, nil
+		return []uint64{}, nil
 	}
 
-	result := []int{rrdTest.Result.Data[0]["rate_up"], rrdTest.Result.Data[0]["rate_down"], rrdTest.Result.Data[0]["snr_up"], rrdTest.Result.Data[0]["snr_down"]}
+	result := []uint64{rrdTest.Result.Data[0]["rate_up"], rrdTest.Result.Data[0]["rate_down"], rrdTest.Result.Data[0]["snr_up"], rrdTest.Result.Data[0]["snr_down"]}
 	return result, nil
 }
 
 // getTemp get temp statistics
-func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, error) {
+func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]uint64, error) {
 	d := &database{
 		DB:        "temp",
 		Fields:    []string{"cpum", "cpub", "sw", "hdd", "fan_speed"},
@@ -183,30 +183,30 @@ func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, 
 
 	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 
 	client := http.Client{}
 	r, err := json.Marshal(*d)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	buf := bytes.NewReader(r)
 	req, err := http.NewRequest(pr.method, fmt.Sprintf(pr.url), buf)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	if resp.StatusCode == 404 {
-		return []int{}, errors.New(resp.Status)
+		return []uint64{}, errors.New(resp.Status)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
@@ -214,13 +214,13 @@ func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, 
 		if debug {
 			log.Println(string(body))
 		}
-		return []int{}, err
+		return []uint64{}, err
 	}
 
 	if rrdTest.ErrorCode == "auth_required" {
 		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
-			return []int{}, err
+			return []uint64{}, err
 		}
 	}
 
@@ -228,18 +228,18 @@ func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, 
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getTemp")
 		}
-		return []int{}, rrdTest.status()
+		return []uint64{}, rrdTest.status()
 	}
 
 	if len(rrdTest.Result.Data) == 0 {
-		return []int{}, nil
+		return []uint64{}, nil
 	}
 
-	return []int{rrdTest.Result.Data[0]["cpum"], rrdTest.Result.Data[0]["cpub"], rrdTest.Result.Data[0]["sw"], rrdTest.Result.Data[0]["hdd"], rrdTest.Result.Data[0]["fan_speed"]}, nil
+	return []uint64{rrdTest.Result.Data[0]["cpum"], rrdTest.Result.Data[0]["cpub"], rrdTest.Result.Data[0]["sw"], rrdTest.Result.Data[0]["hdd"], rrdTest.Result.Data[0]["fan_speed"]}, nil
 }
 
 // getNet get net statistics
-func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, error) {
+func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]uint64, error) {
 	d := &database{
 		DB:        "net",
 		Fields:    []string{"bw_up", "bw_down", "rate_up", "rate_down", "vpn_rate_up", "vpn_rate_down"},
@@ -249,47 +249,44 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 
 	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 
 	client := http.Client{}
 	r, err := json.Marshal(*d)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	buf := bytes.NewReader(r)
 	req, err := http.NewRequest(pr.method, pr.url, buf)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	if resp.StatusCode == 404 {
-		return []int{}, errors.New(resp.Status)
+		return []uint64{}, errors.New(resp.Status)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	rrdTest := rrd{}
-	// debug
-	fmt.Printf("Debug is turned on.\n><)))°> Trace\n%vEnd of trace <°)))><\n\n", string(body))
-	// end debug
 	err = json.Unmarshal(body, &rrdTest)
 	if err != nil {
 		if debug {
 			log.Println(string(body))
 		}
-		return []int{}, err
+		return []uint64{}, err
 	}
 
 	if rrdTest.ErrorCode == "auth_required" {
 		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
-			return []int{}, err
+			return []uint64{}, err
 		}
 	}
 
@@ -297,18 +294,18 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getNet")
 		}
-		return []int{}, rrdTest.status()
+		return []uint64{}, rrdTest.status()
 	}
 
 	if len(rrdTest.Result.Data) == 0 {
-		return []int{}, nil
+		return []uint64{}, nil
 	}
 
-	return []int{rrdTest.Result.Data[0]["bw_up"], rrdTest.Result.Data[0]["bw_down"], rrdTest.Result.Data[0]["rate_up"], rrdTest.Result.Data[0]["rate_down"], rrdTest.Result.Data[0]["vpn_rate_up"], rrdTest.Result.Data[0]["vpn_rate_down"]}, nil
+	return []uint64{rrdTest.Result.Data[0]["bw_up"], rrdTest.Result.Data[0]["bw_down"], rrdTest.Result.Data[0]["rate_up"], rrdTest.Result.Data[0]["rate_down"], rrdTest.Result.Data[0]["vpn_rate_up"], rrdTest.Result.Data[0]["vpn_rate_down"]}, nil
 }
 
 // getSwitch get switch statistics
-func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, error) {
+func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]uint64, error) {
 	d := &database{
 		DB:        "switch",
 		Fields:    []string{"rx_1", "tx_1", "rx_2", "tx_2", "rx_3", "tx_3", "rx_4", "tx_4"},
@@ -318,30 +315,30 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 
 	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 
 	client := http.Client{}
 	r, err := json.Marshal(*d)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	buf := bytes.NewReader(r)
 	req, err := http.NewRequest(pr.method, pr.url, buf)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	req.Header.Add(pr.header, *xSessionToken)
 	resp, err := client.Do(req)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	if resp.StatusCode == 404 {
-		return []int{}, errors.New(resp.Status)
+		return []uint64{}, errors.New(resp.Status)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return []int{}, err
+		return []uint64{}, err
 	}
 	rrdTest := rrd{}
 	err = json.Unmarshal(body, &rrdTest)
@@ -349,13 +346,13 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 		if debug {
 			log.Println(string(body))
 		}
-		return []int{}, err
+		return []uint64{}, err
 	}
 
 	if rrdTest.ErrorCode == "auth_required" {
 		*xSessionToken, err = getSessToken(freeboxToken, authInf, xSessionToken)
 		if err != nil {
-			return []int{}, err
+			return []uint64{}, err
 		}
 	}
 
@@ -363,14 +360,14 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 		if rrdTest.status().Error() == "Unknown return code from the API" {
 			fmt.Println("getSwitch")
 		}
-		return []int{}, rrdTest.status()
+		return []uint64{}, rrdTest.status()
 	}
 
 	if len(rrdTest.Result.Data) == 0 {
-		return []int{}, nil
+		return []uint64{}, nil
 	}
 
-	return []int{rrdTest.Result.Data[0]["rx_1"], rrdTest.Result.Data[0]["tx_1"], rrdTest.Result.Data[0]["rx_2"], rrdTest.Result.Data[0]["tx_2"], rrdTest.Result.Data[0]["rx_3"], rrdTest.Result.Data[0]["tx_3"], rrdTest.Result.Data[0]["rx_4"], rrdTest.Result.Data[0]["tx_4"]}, nil
+	return []uint64{rrdTest.Result.Data[0]["rx_1"], rrdTest.Result.Data[0]["tx_1"], rrdTest.Result.Data[0]["rx_2"], rrdTest.Result.Data[0]["tx_2"], rrdTest.Result.Data[0]["rx_3"], rrdTest.Result.Data[0]["tx_3"], rrdTest.Result.Data[0]["rx_4"], rrdTest.Result.Data[0]["tx_4"]}, nil
 }
 
 // getLan get lan statistics
