@@ -276,7 +276,7 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int, e
 	}
 	rrdTest := rrd{}
 	// debug
-	fmt.Println(body)
+	fmt.Printf("Debug is turned on.\n><)))°> Trace\n%vEnd of trace <°)))><\n\n", string(body))
 	// end debug
 	err = json.Unmarshal(body, &rrdTest)
 	if err != nil {

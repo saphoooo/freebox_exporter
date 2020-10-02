@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -268,12 +269,12 @@ func TestGetNet(t *testing.T) {
 			}
 			myRRD.Result.Data = []map[string]int{
 				{
-					"bw_up":         01,
-					"bw_down":       02,
-					"rate_up":       03,
-					"rate_down":     04,
-					"vpn_rate_up":   05,
-					"vpn_rate_down": 06,
+					"bw_up":         12500000000,
+					"bw_down":       12500000000,
+					"rate_up":       12500000000,
+					"rate_down":     12500000000,
+					"vpn_rate_up":   12500000000,
+					"vpn_rate_down": 12500000000,
 				},
 			}
 			result, _ := json.Marshal(myRRD)
@@ -321,7 +322,7 @@ func TestGetNet(t *testing.T) {
 		t.Error("Expected no err, but go", err)
 	}
 
-	if getNetResult[0] != 01 || getNetResult[1] != 02 || getNetResult[2] != 03 || getNetResult[3] != 04 || getNetResult[4] != 05 || getNetResult[5] != 06 {
+	if getNetResult[0] != 12500000000 || getNetResult[1] != 12500000000 || getNetResult[2] != 12500000000 || getNetResult[3] != 12500000000 || getNetResult[4] != 12500000000 || getNetResult[5] != 12500000000 {
 		t.Errorf("Expected 01 02 03 04 05 06, but got %v %v %v %v %v %v\n", getNetResult[0], getNetResult[1], getNetResult[2], getNetResult[3], getNetResult[4], getNetResult[5])
 	}
 
@@ -695,4 +696,32 @@ func TestGetWifiStations(t *testing.T) {
 		t.Error("Expected -20, but got", wifiStationsStats.Result[0].Signal)
 	}
 
+}
+
+func Test_getNet(t *testing.T) {
+	type args struct {
+		authInf       *authInfo
+		pr            *postRequest
+		xSessionToken *string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []int
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := getNet(tt.args.authInf, tt.args.pr, tt.args.xSessionToken)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getNet() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("getNet() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

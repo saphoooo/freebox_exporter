@@ -76,48 +76,48 @@ type connectionXdsl struct {
 			Uptime     int    `json:"uptime"`
 		} `json:"status"`
 		Down struct {
-			Attn       int  `json:"attn"`
-			Attn10     int  `json:"attn_10"`
-			Crc        int  `json:"crc"`
-			Es         int  `json:"es"`
-			Fec        int  `json:"fec"`
-			Ginp       bool `json:"ginp"`
-			Hec        int  `json:"hec"`
-			Maxrate    uint64  `json:"maxrate"`
-			Nitro      bool `json:"nitro"`
-			Phyr       bool `json:"phyr"`
-			Rate       int  `json:"rate"`
-			RtxC       int  `json:"rtx_c,omitempty"`
-			RtxTx      int  `json:"rtx_tx,omitempty"`
-			RtxUc      int  `json:"rtx_uc,omitempty"`
-			Rxmt       int  `json:"rxmt"`
-			RxmtCorr   int  `json:"rxmt_corr"`
-			RxmtUncorr int  `json:"rxmt_uncorr"`
-			Ses        int  `json:"ses"`
-			Snr        int  `json:"snr"`
-			Snr10      int  `json:"snr_10"`
+			Attn       int    `json:"attn"`
+			Attn10     int    `json:"attn_10"`
+			Crc        int    `json:"crc"`
+			Es         int    `json:"es"`
+			Fec        int    `json:"fec"`
+			Ginp       bool   `json:"ginp"`
+			Hec        int    `json:"hec"`
+			Maxrate    uint64 `json:"maxrate"`
+			Nitro      bool   `json:"nitro"`
+			Phyr       bool   `json:"phyr"`
+			Rate       int    `json:"rate"`
+			RtxC       int    `json:"rtx_c,omitempty"`
+			RtxTx      int    `json:"rtx_tx,omitempty"`
+			RtxUc      int    `json:"rtx_uc,omitempty"`
+			Rxmt       int    `json:"rxmt"`
+			RxmtCorr   int    `json:"rxmt_corr"`
+			RxmtUncorr int    `json:"rxmt_uncorr"`
+			Ses        int    `json:"ses"`
+			Snr        int    `json:"snr"`
+			Snr10      int    `json:"snr_10"`
 		} `json:"down"`
 		Up struct {
-			Attn       int  `json:"attn"`
-			Attn10     int  `json:"attn_10"`
-			Crc        int  `json:"crc"`
-			Es         int  `json:"es"`
-			Fec        int  `json:"fec"`
-			Ginp       bool `json:"ginp"`
-			Hec        int  `json:"hec"`
-			Maxrate    uint64  `json:"maxrate"`
-			Nitro      bool `json:"nitro"`
-			Phyr       bool `json:"phyr"`
-			Rate       uint64  `json:"rate"`
-			RtxC       int  `json:"rtx_c,omitempty"`
-			RtxTx      int  `json:"rtx_tx,omitempty"`
-			RtxUc      int  `json:"rtx_uc,omitempty"`
-			Rxmt       int  `json:"rxmt"`
-			RxmtCorr   int  `json:"rxmt_corr"`
-			RxmtUncorr int  `json:"rxmt_uncorr"`
-			Ses        int  `json:"ses"`
-			Snr        int  `json:"snr"`
-			Snr10      int  `json:"snr_10"`
+			Attn       int    `json:"attn"`
+			Attn10     int    `json:"attn_10"`
+			Crc        int    `json:"crc"`
+			Es         int    `json:"es"`
+			Fec        int    `json:"fec"`
+			Ginp       bool   `json:"ginp"`
+			Hec        int    `json:"hec"`
+			Maxrate    uint64 `json:"maxrate"`
+			Nitro      bool   `json:"nitro"`
+			Phyr       bool   `json:"phyr"`
+			Rate       uint64 `json:"rate"`
+			RtxC       int    `json:"rtx_c,omitempty"`
+			RtxTx      int    `json:"rtx_tx,omitempty"`
+			RtxUc      int    `json:"rtx_uc,omitempty"`
+			Rxmt       int    `json:"rxmt"`
+			RxmtCorr   int    `json:"rxmt_corr"`
+			RxmtUncorr int    `json:"rxmt_uncorr"`
+			Ses        int    `json:"ses"`
+			Snr        int    `json:"snr"`
+			Snr10      int    `json:"snr_10"`
 		} `json:"up"`
 	}
 }
@@ -150,7 +150,7 @@ type freeplugMember struct {
 	HasNetwork    bool   `json:"has_network"`
 	EthSpeed      int    `json:"eth_speed"`
 	Inative       int    `json:"inactive"`
-	NetId         string `json:"net_id"`
+	NetID         string `json:"net_id"`
 	RxRate        int    `json:"rx_rate"`
 	TxRate        int    `json:"tx_rate"`
 }
