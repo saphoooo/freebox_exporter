@@ -58,9 +58,9 @@ type rrd struct {
 	Success bool   `json:"success"`
 	Msg     string `json:"msg,omitempty"`
 	Result  struct {
-		DateStart int                 `json:"date_start,omitempty"`
-		DateEnd   int                 `json:"date_end,omitempty"`
-		Data      []map[string]uint64 `json:"data,omitempty"`
+		DateStart int                `json:"date_start,omitempty"`
+		DateEnd   int                `json:"date_end,omitempty"`
+		Data      []map[string]int64 `json:"data,omitempty"`
 	} `json:"result"`
 	ErrorCode string `json:"error_code"`
 }

@@ -92,7 +92,7 @@ func TestGetDsl(t *testing.T) {
 			myRRD := rrd{
 				Success: true,
 			}
-			myRRD.Result.Data = []map[string]uint64{
+			myRRD.Result.Data = []map[string]int64{
 				{
 					"rate_up":   12,
 					"rate_down": 34,
@@ -179,7 +179,7 @@ func TestGetTemp(t *testing.T) {
 			myRRD := rrd{
 				Success: true,
 			}
-			myRRD.Result.Data = []map[string]uint64{
+			myRRD.Result.Data = []map[string]int64{
 				{
 					"cpum":      01,
 					"cpub":      02,
@@ -267,7 +267,7 @@ func TestGetNet(t *testing.T) {
 			myRRD := rrd{
 				Success: true,
 			}
-			myRRD.Result.Data = []map[string]uint64{
+			myRRD.Result.Data = []map[string]int64{
 				{
 					"bw_up":         12500000000,
 					"bw_down":       12500000000,
@@ -356,7 +356,7 @@ func TestGetSwitch(t *testing.T) {
 			myRRD := rrd{
 				Success: true,
 			}
-			myRRD.Result.Data = []map[string]uint64{
+			myRRD.Result.Data = []map[string]int64{
 				{
 					"rx_1": 01,
 					"tx_1": 11,
