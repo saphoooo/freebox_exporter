@@ -58,13 +58,14 @@ type rrd struct {
 	Success bool   `json:"success"`
 	Msg     string `json:"msg,omitempty"`
 	Result  struct {
-		DateStart int              `json:"date_start,omitempty"`
-		DateEnd   int              `json:"date_end,omitempty"`
-		Data      []map[string]int `json:"data,omitempty"`
+		DateStart int                `json:"date_start,omitempty"`
+		DateEnd   int                `json:"date_end,omitempty"`
+		Data      []map[string]int64 `json:"data,omitempty"`
 	} `json:"result"`
 	ErrorCode string `json:"error_code"`
 }
 
+// https://dev.freebox.fr/sdk/os/connection/
 type connectionXdsl struct {
 	Success bool `json:"success"`
 	Result  struct {
@@ -75,48 +76,48 @@ type connectionXdsl struct {
 			Uptime     int    `json:"uptime"`
 		} `json:"status"`
 		Down struct {
-			Attn       int  `json:"attn"`
-			Attn10     int  `json:"attn_10"`
-			Crc        int  `json:"crc"`
-			Es         int  `json:"es"`
-			Fec        int  `json:"fec"`
-			Ginp       bool `json:"ginp"`
-			Hec        int  `json:"hec"`
-			Maxrate    int  `json:"maxrate"`
-			Nitro      bool `json:"nitro"`
-			Phyr       bool `json:"phyr"`
-			Rate       int  `json:"rate"`
-			RtxC       int  `json:"rtx_c,omitempty"`
-			RtxTx      int  `json:"rtx_tx,omitempty"`
-			RtxUc      int  `json:"rtx_uc,omitempty"`
-			Rxmt       int  `json:"rxmt"`
-			RxmtCorr   int  `json:"rxmt_corr"`
-			RxmtUncorr int  `json:"rxmt_uncorr"`
-			Ses        int  `json:"ses"`
-			Snr        int  `json:"snr"`
-			Snr10      int  `json:"snr_10"`
+			Attn       int    `json:"attn"`
+			Attn10     int    `json:"attn_10"`
+			Crc        int    `json:"crc"`
+			Es         int    `json:"es"`
+			Fec        int    `json:"fec"`
+			Ginp       bool   `json:"ginp"`
+			Hec        int    `json:"hec"`
+			Maxrate    uint64 `json:"maxrate"`
+			Nitro      bool   `json:"nitro"`
+			Phyr       bool   `json:"phyr"`
+			Rate       int    `json:"rate"`
+			RtxC       int    `json:"rtx_c,omitempty"`
+			RtxTx      int    `json:"rtx_tx,omitempty"`
+			RtxUc      int    `json:"rtx_uc,omitempty"`
+			Rxmt       int    `json:"rxmt"`
+			RxmtCorr   int    `json:"rxmt_corr"`
+			RxmtUncorr int    `json:"rxmt_uncorr"`
+			Ses        int    `json:"ses"`
+			Snr        int    `json:"snr"`
+			Snr10      int    `json:"snr_10"`
 		} `json:"down"`
 		Up struct {
-			Attn       int  `json:"attn"`
-			Attn10     int  `json:"attn_10"`
-			Crc        int  `json:"crc"`
-			Es         int  `json:"es"`
-			Fec        int  `json:"fec"`
-			Ginp       bool `json:"ginp"`
-			Hec        int  `json:"hec"`
-			Maxrate    int  `json:"maxrate"`
-			Nitro      bool `json:"nitro"`
-			Phyr       bool `json:"phyr"`
-			Rate       int  `json:"rate"`
-			RtxC       int  `json:"rtx_c,omitempty"`
-			RtxTx      int  `json:"rtx_tx,omitempty"`
-			RtxUc      int  `json:"rtx_uc,omitempty"`
-			Rxmt       int  `json:"rxmt"`
-			RxmtCorr   int  `json:"rxmt_corr"`
-			RxmtUncorr int  `json:"rxmt_uncorr"`
-			Ses        int  `json:"ses"`
-			Snr        int  `json:"snr"`
-			Snr10      int  `json:"snr_10"`
+			Attn       int    `json:"attn"`
+			Attn10     int    `json:"attn_10"`
+			Crc        int    `json:"crc"`
+			Es         int    `json:"es"`
+			Fec        int    `json:"fec"`
+			Ginp       bool   `json:"ginp"`
+			Hec        int    `json:"hec"`
+			Maxrate    uint64 `json:"maxrate"`
+			Nitro      bool   `json:"nitro"`
+			Phyr       bool   `json:"phyr"`
+			Rate       uint64 `json:"rate"`
+			RtxC       int    `json:"rtx_c,omitempty"`
+			RtxTx      int    `json:"rtx_tx,omitempty"`
+			RtxUc      int    `json:"rtx_uc,omitempty"`
+			Rxmt       int    `json:"rxmt"`
+			RxmtCorr   int    `json:"rxmt_corr"`
+			RxmtUncorr int    `json:"rxmt_uncorr"`
+			Ses        int    `json:"ses"`
+			Snr        int    `json:"snr"`
+			Snr10      int    `json:"snr_10"`
 		} `json:"up"`
 	}
 }
@@ -129,6 +130,7 @@ type database struct {
 	Fields    []string `json:"fields"`
 }
 
+// https://dev.freebox.fr/sdk/os/freeplug/
 type freeplug struct {
 	Success bool              `json:"success"`
 	Result  []freeplugNetwork `json:"result"`
@@ -148,11 +150,12 @@ type freeplugMember struct {
 	HasNetwork    bool   `json:"has_network"`
 	EthSpeed      int    `json:"eth_speed"`
 	Inative       int    `json:"inactive"`
-	NetId         string `json:"net_id"`
+	NetID         string `json:"net_id"`
 	RxRate        int    `json:"rx_rate"`
 	TxRate        int    `json:"tx_rate"`
 }
 
+// https://dev.freebox.fr/sdk/os/lan/
 type lanHost struct {
 	Reachable   bool   `json:"reachable,omitempty"`
 	PrimaryName string `json:"primary_name,omitempty"`
@@ -170,6 +173,7 @@ type idNameValue struct {
 	Value int    `json:"value,omitempty"`
 }
 
+// https://dev.freebox.fr/sdk/os/system/
 type system struct {
 	Success bool `json:"success"`
 	Result  struct {
@@ -191,6 +195,7 @@ type system struct {
 	}
 }
 
+// https://dev.freebox.fr/sdk/os/wifi/
 type wifiAccessPoint struct {
 	Name string `json:"name,omitempty"`
 	ID   int    `json:"id,omitempty"`
