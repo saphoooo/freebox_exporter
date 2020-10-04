@@ -1,8 +1,12 @@
 # Changelog
 
+## [1.3] - 2020-10-04
+
+- Add VPN server metrics, mainly tx and rx for a user on a vpn with scr and local ip as labels
+
 ## [1.2.2] - 2020-10-03
 
-- Change variable type int to int64 for RRD metrics, causing an error "constant overflow"
+- Change variable type int to int64 for RRD metrics, causing an error "constant overflow" on arm chipset
 
 ## [1.2] - 2020-05-27
 
