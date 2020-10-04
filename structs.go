@@ -251,3 +251,19 @@ type authInfo struct {
 type postRequest struct {
 	method, url, header string
 }
+
+// https://dev.freebox.fr/sdk/os/vpn/
+type vpnServer struct {
+	Success bool `json:"success"`
+	Result  []struct {
+		RxBytes       int    `json:"rx_bytes,omitempty"`
+		Authenticated bool   `json:"authenticated,omitempty"`
+		TxBytes       int    `json:"tx_bytes,omitempty"`
+		User          string `json:"user,omitempty"`
+		ID            string `json:"id,omitempty"`
+		Vpn           string `json:"vpn,omitempty"`
+		SrcIP         string `json:"src_ip,omitempty"`
+		AuthTime      int32  `json:"auth_time,omitempty"`
+		LocalIP       string `json:"local_ip,omitempty"`
+	} `json:"result,omitempty"`
+}
