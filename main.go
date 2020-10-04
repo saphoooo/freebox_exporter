@@ -37,7 +37,6 @@ func main() {
 		mafreebox = mafreebox + "/"
 	}
 
-	// myAuthInfo contains all auth data
 	endpoint := mafreebox + "api/v4/login/"
 	myAuthInfo := &authInfo{
 		myAPI: api{
@@ -95,7 +94,6 @@ func main() {
 
 	var mySessionToken string
 
-	// infinite loop to get all statistics
 	go func() {
 		for {
 			// There is no DSL metric on fiber Freebox
@@ -258,7 +256,7 @@ func main() {
 				}
 			}
 
-			// VPN Client Status Metrics
+			// VPN Server Connections List
 			getVpnServerResult, err := getVpnServer(myAuthInfo, myVpnRequest, &mySessionToken)
 			if err != nil {
 				log.Printf("An error occured with VPN station metrics: %v", err)
@@ -272,7 +270,6 @@ func main() {
 		}
 	}()
 
-	// expose the registered metrics via HTTP OpenMetrics
 	log.Println("freebox_exporter started on port", listen)
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(listen, nil))
