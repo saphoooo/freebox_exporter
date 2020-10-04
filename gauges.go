@@ -9,7 +9,7 @@ var (
 	// XXX: see https://dev.freebox.fr/sdk/os/ for API documentation
 	// XXX: see https://prometheus.io/docs/practices/naming/ for metric names
 
-	// connectionXdsl gauges
+	// connectionXdsl
 	connectionXdslStatusUptimeGauges = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "freebox_connection_xdsl_status_uptime_seconds_total",
 	},
@@ -63,7 +63,7 @@ var (
 		},
 	)
 
-	// RRD dsl gauges
+	// RRD dsl [unstable]
 	rateUpGauge = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_dsl_up_bytes",
 		Help: "Available upload bandwidth (in byte/s)",
@@ -81,7 +81,7 @@ var (
 		Help: "Download signal/noise ratio (in 1/10 dB)",
 	})
 
-	// freeplug gauges
+	// freeplug
 	freeplugRxRateGauge = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "freebox_freeplug_rx_rate_bits",
 		Help: "rx rate (from the freeplugs to the \"cco\" freeplug) (in bits/s) -1 if not available",
@@ -107,7 +107,7 @@ var (
 		},
 	)
 
-	// RRD net gauges
+	// RRD Net [unstable]
 	bwUpGauge = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "freebox_net_bw_up_bytes",
 		Help: "Upload available bandwidth (in byte/s)",
@@ -133,19 +133,17 @@ var (
 		Help: "Vpn client download rate (in byte/s)",
 	})
 
-	// lan gauges
+	// Lan
 	lanReachableGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_lan_reachable",
 			Help: "Hosts reachable on LAN",
 		},
 		[]string{
-			// Hostname
-			"name",
+			"name", // hostname
 		},
 	)
 
-	// system temp gauges
 	systemTempGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_system_temp_celsius",
@@ -156,7 +154,6 @@ var (
 		},
 	)
 
-	// system fan gauges
 	systemFanGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_system_fan_rpm",
@@ -167,7 +164,6 @@ var (
 		},
 	)
 
-	// system uptime gauges
 	systemUptimeGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_system_uptime_seconds_total",
@@ -177,14 +173,13 @@ var (
 		},
 	)
 
-	// wifi station labels
+	// wifi
 	wifiLabels = []string{
 		"access_point",
 		"hostname",
 		"state",
 	}
 
-	// wifi station signal gauges
 	wifiSignalGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_wifi_signal_attenuation_db",
@@ -193,7 +188,6 @@ var (
 		wifiLabels,
 	)
 
-	// wifi station inactive gauges
 	wifiInactiveGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_wifi_inactive_duration_seconds",
@@ -202,7 +196,6 @@ var (
 		wifiLabels,
 	)
 
-	// wifi station conn_duration gauges
 	wifiConnectionDurationGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_wifi_connection_duration_seconds",
@@ -211,7 +204,6 @@ var (
 		wifiLabels,
 	)
 
-	// wifi station rx_bytes gauges
 	wifiRXBytesGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_wifi_rx_bytes",
@@ -220,7 +212,6 @@ var (
 		wifiLabels,
 	)
 
-	// wifi station tx_bytes gauges
 	wifiTXBytesGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_wifi_tx_bytes",
@@ -229,7 +220,6 @@ var (
 		wifiLabels,
 	)
 
-	// wifi station rx_rate gauges
 	wifiRXRateGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_wifi_rx_rate",
@@ -238,7 +228,6 @@ var (
 		wifiLabels,
 	)
 
-	// wifi station rx_rate gauges
 	wifiTXRateGauges = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "freebox_wifi_tx_rate",
@@ -247,7 +236,7 @@ var (
 		wifiLabels,
 	)
 
-	// vpn server connections list
+	// vpn server connections list [unstable]
 	vpnServerConnectionsList = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "vpn_server_connections_list",
@@ -258,7 +247,7 @@ var (
 			"vpn",
 			"src_ip",
 			"local_ip",
-			"name",
+			"name", // rx_bytes|tx_bytes
 		},
 	)
 )

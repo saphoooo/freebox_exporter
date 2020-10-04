@@ -41,7 +41,6 @@ func (l *lan) status() error {
 	return apiErrors[l.ErrorCode]
 }
 
-// setFreeboxToken ensure that there is an active token for a call
 func setFreeboxToken(authInf *authInfo, xSessionToken *string) (string, error) {
 	token := os.Getenv("FREEBOX_TOKEN")
 
@@ -106,7 +105,6 @@ func getConnectionXdsl(authInf *authInfo, pr *postRequest, xSessionToken *string
 	return connectionXdslResp, nil
 }
 
-// getDsl get dsl statistics
 func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int64, error) {
 	d := &database{
 		DB:        "dsl",
@@ -172,7 +170,6 @@ func getDsl(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int64,
 	return result, nil
 }
 
-// getTemp get temp statistics
 func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int64, error) {
 	d := &database{
 		DB:        "temp",
@@ -238,7 +235,6 @@ func getTemp(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int64
 	return []int64{rrdTest.Result.Data[0]["cpum"], rrdTest.Result.Data[0]["cpub"], rrdTest.Result.Data[0]["sw"], rrdTest.Result.Data[0]["hdd"], rrdTest.Result.Data[0]["fan_speed"]}, nil
 }
 
-// getNet get net statistics
 func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int64, error) {
 	d := &database{
 		DB:        "net",
@@ -304,7 +300,6 @@ func getNet(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int64,
 	return []int64{rrdTest.Result.Data[0]["bw_up"], rrdTest.Result.Data[0]["bw_down"], rrdTest.Result.Data[0]["rate_up"], rrdTest.Result.Data[0]["rate_down"], rrdTest.Result.Data[0]["vpn_rate_up"], rrdTest.Result.Data[0]["vpn_rate_down"]}, nil
 }
 
-// getSwitch get switch statistics
 func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int64, error) {
 	d := &database{
 		DB:        "switch",
@@ -370,7 +365,6 @@ func getSwitch(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]int
 	return []int64{rrdTest.Result.Data[0]["rx_1"], rrdTest.Result.Data[0]["tx_1"], rrdTest.Result.Data[0]["rx_2"], rrdTest.Result.Data[0]["tx_2"], rrdTest.Result.Data[0]["rx_3"], rrdTest.Result.Data[0]["tx_3"], rrdTest.Result.Data[0]["rx_4"], rrdTest.Result.Data[0]["tx_4"]}, nil
 }
 
-// getLan get lan statistics
 func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHost, error) {
 	freeboxToken, err := setFreeboxToken(authInf, xSessionToken)
 	if err != nil {
