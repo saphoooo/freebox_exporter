@@ -87,6 +87,12 @@ func main() {
 		header: "X-Fbx-App-Auth",
 	}
 
+	myVpnRequest := &postRequest{
+		method: "GET",
+		url:    mafreebox + "api/v4/vpn/connection/",
+		header: "X-Fbx-App-Auth",
+	}
+
 	var mySessionToken string
 
 	// infinite loop to get all statistics
@@ -250,6 +256,16 @@ func main() {
 					wifiRXRateGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.RXRate))
 					wifiTXRateGauges.With(prometheus.Labels{"access_point": accessPoint.Name, "hostname": station.Hostname, "state": station.State}).Set(float64(station.TXRate))
 				}
+			}
+
+			// VPN Client Status Metrics
+			getVpnServerResult, err := getVpnServer(myAuthInfo, myVpnRequest, &mySessionToken)
+			if err != nil {
+				log.Printf("An error occured with VPN station metrics: %v", err)
+			}
+			for _, connection := range getVpnServerResult.Result {
+				vpnServerConnectionsList.With(prometheus.Labels{"user": connection.User, "vpn": connection.Vpn, "src_ip": connection.SrcIP, "local_ip": connection.LocalIP, "name": "rx_bytes"}).Set(float64(connection.RxBytes))
+				vpnServerConnectionsList.With(prometheus.Labels{"user": connection.User, "vpn": connection.Vpn, "src_ip": connection.SrcIP, "local_ip": connection.LocalIP, "name": "tx_bytes"}).Set(float64(connection.TxBytes))
 			}
 
 			time.Sleep(10 * time.Second)

@@ -542,3 +542,34 @@ func getWifiStations(authInf *authInfo, pr *postRequest, xSessionToken *string) 
 
 	return wifiStationResp, nil
 }
+
+func getVpnServer(authInf *authInfo, pr *postRequest, xSessionToken *string) (vpnServer, error) {
+	client := http.Client{}
+	req, err := http.NewRequest(pr.method, pr.url, nil)
+	if err != nil {
+		return vpnServer{}, err
+	}
+	req.Header.Add(pr.header, *xSessionToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return vpnServer{}, err
+	}
+	if resp.StatusCode == 404 {
+		return vpnServer{}, errors.New(resp.Status)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return vpnServer{}, err
+	}
+
+	vpnServerResp := vpnServer{}
+	err = json.Unmarshal(body, &vpnServerResp)
+	if err != nil {
+		if debug {
+			log.Println(string(body))
+		}
+		return vpnServer{}, err
+	}
+
+	return vpnServerResp, nil
+}

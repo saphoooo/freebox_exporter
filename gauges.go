@@ -246,4 +246,19 @@ var (
 		},
 		wifiLabels,
 	)
+
+	// vpn server connections list
+	vpnServerConnectionsList = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "vpn_server_connections_list",
+			Help: "VPN server connections list",
+		},
+		[]string{
+			"user",
+			"vpn",
+			"src_ip",
+			"local_ip",
+			"name",
+		},
+	)
 )
