@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.2] - 2020-10-03
+
+- Change variable type int to int64 for RRD metrics, causing an error "constant overflow"
+
 ## [1.2] - 2020-05-27
 
 - Add build script
