@@ -156,9 +156,15 @@ type freeplugMember struct {
 }
 
 // https://dev.freebox.fr/sdk/os/lan/
+type l3c struct {
+	Addr        string `json:"addr,omitempty"`
+}
+
 type lanHost struct {
 	Reachable   bool   `json:"reachable,omitempty"`
 	PrimaryName string `json:"primary_name,omitempty"`
+	Vendor_name string `json:"vendor_name,omitempty"`
+	L3c         []l3c  `json:"l3connectivities,omitempty"`
 }
 
 type lan struct {

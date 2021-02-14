@@ -141,6 +141,8 @@ var (
 		},
 		[]string{
 			"name", // hostname
+			"vendor",
+			"ip",
 		},
 	)
 

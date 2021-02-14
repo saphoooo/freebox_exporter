@@ -207,10 +207,16 @@ func main() {
 				log.Printf("An error occured with LAN metrics: %v", err)
 			}
 			for _, v := range lanAvailable {
-				if v.Reachable {
-					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(1))
+				var Ip string
+				if len(v.L3c) > 0 {
+					Ip = v.L3c[0].Addr
 				} else {
-					lanReachableGauges.WithLabelValues(v.PrimaryName).Set(float64(0))
+					Ip = ""
+				}
+				if v.Reachable {
+					lanReachableGauges.With(prometheus.Labels{"name": v.PrimaryName, "vendor":v.Vendor_name, "ip": Ip}).Set(float64(1))
+				} else {
+					lanReachableGauges.With(prometheus.Labels{"name": v.PrimaryName, "vendor":v.Vendor_name, "ip": Ip}).Set(float64(0))
 				}
 			}
 
