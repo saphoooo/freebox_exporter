@@ -629,9 +629,9 @@ func TestGetWifiStations(t *testing.T) {
 			State:              "authorized",
 			Inactive:           60,
 			RXBytes:            500,
-			TXBytes:            10000,
+			TXBytes:            2280000000,
 			ConnectionDuration: 600,
-			TXRate:             20,
+			TXRate:             4260000000,
 			RXRate:             5,
 			Signal:             -20,
 		}
