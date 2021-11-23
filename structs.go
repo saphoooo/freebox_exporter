@@ -153,11 +153,12 @@ type freeplugMember struct {
 	NetID         string `json:"net_id"`
 	RxRate        int64  `json:"rx_rate"`
 	TxRate        int64  `json:"tx_rate"`
+	Model         string `json:"model"`
 }
 
 // https://dev.freebox.fr/sdk/os/lan/
 type l3c struct {
-	Addr        string `json:"addr,omitempty"`
+	Addr string `json:"addr,omitempty"`
 }
 
 type lanHost struct {
@@ -217,11 +218,11 @@ type wifiStation struct {
 	MAC                string `json:"mac,omitempty"`
 	State              string `json:"state,omitempty"`
 	Inactive           int    `json:"inactive,omitempty"`
-	RXBytes            int64   `json:"rx_bytes,omitempty"`
-	TXBytes            int64   `json:"tx_bytes,omitempty"`
+	RXBytes            int64  `json:"rx_bytes,omitempty"`
+	TXBytes            int64  `json:"tx_bytes,omitempty"`
 	ConnectionDuration int    `json:"conn_duration,omitempty"`
-	TXRate             int64   `json:"tx_rate,omitempty"`
-	RXRate             int64   `json:"rx_rate,omitempty"`
+	TXRate             int64  `json:"tx_rate,omitempty"`
+	RXRate             int64  `json:"rx_rate,omitempty"`
 	Signal             int    `json:"signal,omitempty"`
 }
 
