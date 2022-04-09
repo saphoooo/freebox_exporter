@@ -414,6 +414,10 @@ func getLan(authInf *authInfo, pr *postRequest, xSessionToken *string) ([]lanHos
 }
 
 func getFreeplug(authInf *authInfo, pr *postRequest, xSessionToken *string) (freeplug, error) {
+	if _, err := setFreeboxToken(authInf, xSessionToken); err != nil {
+		return freeplug{}, err
+	}
+
 	client := http.Client{}
 	req, err := http.NewRequest(pr.method, pr.url, nil)
 	if err != nil {
