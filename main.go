@@ -43,7 +43,11 @@ func getEnvOrDefaultBool(key string, defaultValue bool) bool {
 	if value == "" {
 		return defaultValue
 	}
-	return true
+	boolValue, err := strconv.ParseBool(value)
+	if err != nil {
+		return defaultValue
+	}
+	return boolValue
 }
 
 func main() {
