@@ -114,7 +114,10 @@ func main() {
 		for {
 			// There is no DSL metric on fiber Freebox
 			// If you use a fiber Freebox, use -fiber flag to turn off this metric
-			log.Printf("The value of fiber is: %v", fiber)
+			if debug {
+				log.Printf("The value of fiber is: %v", fiber)
+			}
+			
 			if !fiber {
 				// connectionXdsl metrics
 				connectionXdslStats, err := getConnectionXdsl(myAuthInfo, myConnectionXdslRequest, &mySessionToken)
