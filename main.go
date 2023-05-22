@@ -24,10 +24,30 @@ var (
 )
 
 func init() {
-	flag.StringVar(&mafreebox, "endpoint", "http://mafreebox.freebox.fr/", "Endpoint for freebox API")
-	flag.StringVar(&listen, "listen", ":10001", "Prometheus metrics port")
-	flag.BoolVar(&debug, "debug", false, "Debug mode")
-	flag.BoolVar(&fiber, "fiber", false, "Turn on if you're using a fiber Freebox")
+	flag.StringVar(&mafreebox, "endpoint", getEnvOrDefault("ENDPOINT", "http://mafreebox.freebox.fr/"), "Endpoint for freebox API")
+	flag.StringVar(&listen, "listen", getEnvOrDefault("LISTEN", ":10001"), "Prometheus metrics port")
+	flag.BoolVar(&debug, "debug", getEnvOrDefaultBool("DEBUG", false), "Debug mode")
+	flag.BoolVar(&fiber, "fiber", getEnvOrDefaultBool("FIBER", false), "Turn on if you're using a fiber Freebox")
+}
+
+func getEnvOrDefault(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}
+
+func getEnvOrDefaultBool(key string, defaultValue bool) bool {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	boolValue, err := strconv.ParseBool(value)
+	if err != nil {
+		return defaultValue
+	}
+	return boolValue
 }
 
 func main() {
@@ -98,6 +118,10 @@ func main() {
 		for {
 			// There is no DSL metric on fiber Freebox
 			// If you use a fiber Freebox, use -fiber flag to turn off this metric
+			if debug {
+				log.Printf("The value of fiber is: %v", fiber)
+			}
+			
 			if !fiber {
 				// connectionXdsl metrics
 				connectionXdslStats, err := getConnectionXdsl(myAuthInfo, myConnectionXdslRequest, &mySessionToken)
